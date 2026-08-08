@@ -20,6 +20,7 @@ const create = async (req, res) => {
     const task = new Task({
       title: req.body.title,
       course: req.body.course,
+      description: req.body.description || '',
       dueDate: req.body.dueDate,
       status: req.body.status,
       owner: req.auth._id,
@@ -38,6 +39,7 @@ const update = async (req, res) => {
       {
         title: req.body.title,
         course: req.body.course,
+        description: req.body.description || '',
         dueDate: req.body.dueDate,
         status: req.body.status,
       },

@@ -1,22 +1,43 @@
 import { useState } from 'react'
-import { Alert, Box, Button, Card, CardContent, Container, Link, TextField, Typography } from '@mui/material'
+import {
+  Alert,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  Container,
+  Link,
+  TextField,
+  Typography,
+} from '@mui/material'
 import { useNavigate } from 'react-router-dom'
 import { apiRequest } from '../src/api'
 import { saveAuth } from '../src/auth'
+import logo from '../src/assets/student-task-tracker-logo.png'
 
 const AuthPage = ({ mode }) => {
   const isRegister = mode === 'register'
   const navigate = useNavigate()
-  const [form, setForm] = useState({ name: '', email: '', password: '' })
+
+  const [form, setForm] = useState({
+    name: '',
+    email: '',
+    password: '',
+  })
+
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
   const updateField = (event) => {
-    setForm({ ...form, [event.target.name]: event.target.value })
+    setForm({
+      ...form,
+      [event.target.name]: event.target.value,
+    })
   }
 
   const submit = async (event) => {
     event.preventDefault()
+
     setError('')
     setLoading(true)
 
@@ -24,14 +45,22 @@ const AuthPage = ({ mode }) => {
       if (isRegister) {
         await apiRequest('/api/users', {
           method: 'POST',
-          body: JSON.stringify(form),
+          body: JSON.stringify({
+            name: form.name,
+            email: form.email,
+            password: form.password,
+          }),
         })
       }
 
       const auth = await apiRequest('/auth/signin', {
         method: 'POST',
-        body: JSON.stringify({ email: form.email, password: form.password }),
+        body: JSON.stringify({
+          email: form.email,
+          password: form.password,
+        }),
       })
+
       saveAuth(auth)
       navigate('/')
     } catch (err) {
@@ -42,38 +71,349 @@ const AuthPage = ({ mode }) => {
   }
 
   return (
-    <Container maxWidth="sm" sx={{ py: 8 }}>
-      <Card>
-        <CardContent sx={{ p: { xs: 3, sm: 5 } }}>
-          <Typography variant="h4" fontWeight={700} gutterBottom>
-            {isRegister ? 'Create your account' : 'Welcome back'}
-          </Typography>
-          <Typography color="text.secondary" sx={{ mb: 3 }}>
-            {isRegister ? 'Start tracking assignments and deadlines.' : 'Sign in to view your tasks.'}
-          </Typography>
+    <Box
+      sx={{
+        minHeight: '100vh',
+        display: 'flex',
+        alignItems: 'center',
+        background: `
+          radial-gradient(
+            circle at 10% 20%,
+            rgba(255, 64, 87, 0.09),
+            transparent 30%
+          ),
+          radial-gradient(
+            circle at 90% 80%,
+            rgba(37, 43, 58, 0.08),
+            transparent 32%
+          ),
+          #f7f8fb
+        `,
+        py: {
+          xs: 4,
+          md: 6,
+        },
+      }}
+    >
+      <Container maxWidth="lg">
+        <Box
+          sx={{
+            display: 'grid',
+            gridTemplateColumns: {
+              xs: '1fr',
+              md: 'minmax(420px, 0.9fr) minmax(420px, 1.1fr)',
+            },
+            alignItems: 'center',
+            gap: {
+              xs: 5,
+              md: 8,
+            },
+          }}
+        >
+          {/* LEFT SIDE */}
+          <Card
+            sx={{
+              width: '100%',
+              maxWidth: 520,
+              justifySelf: {
+                xs: 'center',
+                md: 'start',
+              },
+              borderRadius: 4,
+              overflow: 'hidden',
+              border: '1px solid rgba(37, 43, 58, 0.06)',
+              boxShadow:
+                '0 20px 60px rgba(37, 43, 58, 0.10)',
+              position: 'relative',
 
-          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+              '&::before': {
+                content: '""',
+                position: 'absolute',
+                top: 0,
+                left: 0,
+                right: 0,
+                height: 7,
+                background:
+                  'linear-gradient(90deg, #ff4057 0%, #ff7180 48%, #252b3a 100%)',
+              },
+            }}
+          >
+            <CardContent
+              sx={{
+                p: {
+                  xs: 3,
+                  sm: 5,
+                },
 
-          <Box component="form" onSubmit={submit} sx={{ display: 'grid', gap: 2 }}>
-            {isRegister && (
-              <TextField name="name" label="Name" value={form.name} onChange={updateField} required />
-            )}
-            <TextField name="email" label="Email" type="email" value={form.email} onChange={updateField} required />
-            <TextField name="password" label="Password" type="password" value={form.password} onChange={updateField} required inputProps={{ minLength: 6 }} />
-            <Button type="submit" variant="contained" size="large" disabled={loading}>
-              {loading ? 'Please wait…' : isRegister ? 'Register' : 'Login'}
-            </Button>
+                '&:last-child': {
+                  pb: {
+                    xs: 3,
+                    sm: 5,
+                  },
+                },
+              }}
+            >
+              <Typography
+                variant="overline"
+                sx={{
+                  color: '#ff4057',
+                  fontWeight: 800,
+                  letterSpacing: 1.5,
+                }}
+              >
+                Student Task Tracker
+              </Typography>
+
+              <Typography
+                variant="h4"
+                sx={{
+                  mt: 1,
+                  mb: 1,
+                  fontWeight: 800,
+                  color: '#353344',
+                }}
+              >
+                {isRegister
+                  ? 'Create your account'
+                  : 'Welcome back'}
+              </Typography>
+
+              <Typography
+                sx={{
+                  mb: 4,
+                  color: '#697083',
+                  fontSize: '1rem',
+                }}
+              >
+                {isRegister
+                  ? 'Start organizing your assignments and deadlines.'
+                  : 'Sign in to organize your academic workload.'}
+              </Typography>
+
+              {error && (
+                <Alert
+                  severity="error"
+                  sx={{
+                    mb: 2,
+                    borderRadius: 2,
+                  }}
+                >
+                  {error}
+                </Alert>
+              )}
+
+              <Box
+                component="form"
+                onSubmit={submit}
+                sx={{
+                  display: 'grid',
+                  gap: 2.2,
+                }}
+              >
+                {isRegister && (
+                  <TextField
+                    name="name"
+                    label="Name"
+                    value={form.name}
+                    onChange={updateField}
+                    required
+                    fullWidth
+                    sx={{
+                      '& .MuiOutlinedInput-root': {
+                        borderRadius: 2.5,
+                      },
+                    }}
+                  />
+                )}
+
+                <TextField
+                  name="email"
+                  label="Email"
+                  type="email"
+                  value={form.email}
+                  onChange={updateField}
+                  required
+                  fullWidth
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2.5,
+                    },
+                  }}
+                />
+
+                <TextField
+                  name="password"
+                  label="Password"
+                  type="password"
+                  value={form.password}
+                  onChange={updateField}
+                  required
+                  fullWidth
+                  inputProps={{
+                    minLength: 6,
+                  }}
+                  sx={{
+                    '& .MuiOutlinedInput-root': {
+                      borderRadius: 2.5,
+                    },
+                  }}
+                />
+
+                <Button
+                  type="submit"
+                  variant="contained"
+                  size="large"
+                  disabled={loading}
+                  sx={{
+                    mt: 0.5,
+                    py: 1.45,
+                    borderRadius: 2.5,
+                    bgcolor: '#ff4057',
+                    color: '#fff',
+                    fontWeight: 800,
+                    fontSize: '0.95rem',
+                    textTransform: 'none',
+                    boxShadow:
+                      '0 8px 20px rgba(255, 64, 87, 0.22)',
+
+                    '&:hover': {
+                      bgcolor: '#e9364d',
+                      boxShadow:
+                        '0 10px 24px rgba(255, 64, 87, 0.28)',
+                    },
+                  }}
+                >
+                  {loading
+                    ? 'Please wait...'
+                    : isRegister
+                      ? 'Register'
+                      : 'Login'}
+                </Button>
+              </Box>
+
+              <Typography
+                sx={{
+                  mt: 3,
+                  color: '#252b3a',
+                }}
+              >
+                {isRegister
+                  ? 'Already have an account? '
+                  : 'Need an account? '}
+
+                <Link
+                  component="button"
+                  type="button"
+                  onClick={() =>
+                    navigate(
+                      isRegister
+                        ? '/login'
+                        : '/register',
+                    )
+                  }
+                  sx={{
+                    color: '#ff4057',
+                    fontWeight: 700,
+                    textDecorationColor:
+                      'rgba(255, 64, 87, 0.4)',
+                  }}
+                >
+                  {isRegister
+                    ? 'Login'
+                    : 'Register'}
+                </Link>
+              </Typography>
+            </CardContent>
+          </Card>
+
+          {/* RIGHT SIDE */}
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              textAlign: 'center',
+              minHeight: {
+                xs: 'auto',
+                md: 540,
+              },
+              px: {
+                xs: 1,
+                md: 3,
+              },
+            }}
+          >
+            <Box
+              component="img"
+              src={logo}
+              alt="Student Task Tracker"
+              sx={{
+                width: {
+                  xs: 260,
+                  sm: 340,
+                  md: 460,
+                },
+                maxWidth: '100%',
+                height: 'auto',
+                objectFit: 'contain',
+                mb: 3,
+                filter:
+                  'drop-shadow(0 18px 30px rgba(37, 43, 58, 0.14))',
+              }}
+            />
+
+            <Typography
+              sx={{
+                color: '#697083',
+                maxWidth: 500,
+                fontSize: {
+                  xs: '1rem',
+                  md: '1.1rem',
+                },
+                lineHeight: 1.7,
+              }}
+            >
+              Organize assignments, monitor deadlines,
+              and keep track of your academic progress
+              in one place.
+            </Typography>
+
+            <Box
+              sx={{
+                display: 'flex',
+                flexWrap: 'wrap',
+                gap: 1,
+                mt: 3,
+                justifyContent: 'center',
+              }}
+            >
+              {[
+                'Assignments',
+                'Deadlines',
+                'Progress',
+              ].map((item) => (
+                <Box
+                  key={item}
+                  sx={{
+                    px: 1.8,
+                    py: 0.8,
+                    borderRadius: 99,
+                    bgcolor:
+                      'rgba(255, 64, 87, 0.08)',
+                    color: '#ff4057',
+                    fontSize: '0.8rem',
+                    fontWeight: 700,
+                  }}
+                >
+                  {item}
+                </Box>
+              ))}
+            </Box>
           </Box>
-
-          <Typography sx={{ mt: 3 }} textAlign="center">
-            {isRegister ? 'Already have an account? ' : 'Need an account? '}
-            <Link component="button" type="button" onClick={() => navigate(isRegister ? '/login' : '/register')}>
-              {isRegister ? 'Login' : 'Register'}
-            </Link>
-          </Typography>
-        </CardContent>
-      </Card>
-    </Container>
+        </Box>
+      </Container>
+    </Box>
   )
 }
 
