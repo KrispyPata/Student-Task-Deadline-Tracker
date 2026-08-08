@@ -23,24 +23,37 @@ import AddIcon from '@mui/icons-material/Add'
 import EditIcon from '@mui/icons-material/Edit'
 import DeleteIcon from '@mui/icons-material/Delete'
 import NotificationsIcon from '@mui/icons-material/Notifications'
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive'
 import { apiRequest } from '../src/api'
 import AppNavigation from './AppNavigation'
 
 const emptyReminder = {
   name: '',
-  frequency: '',
+  frequency: 'Once',
   task: '',
   sendTime: '',
-  sendType: '',
+  sendType: 'In App',
 }
 
 const Reminders = () => {
   const [reminders, setReminders] = useState([])
   const [tasks, setTasks] = useState([])
   const [form, setForm] = useState(emptyReminder)
-  const [editingId, setEditingId] = useState(null)
-  const [dialogOpen, setDialogOpen] = useState(false)
+
+  const [editingId, setEditingId] =
+    useState(null)
+
+  const [dialogOpen, setDialogOpen] =
+    useState(false)
+
   const [error, setError] = useState('')
+
+  const [notificationStatus, setNotificationStatus] =
+    useState(
+      'Notification' in window
+        ? Notification.permission
+        : 'unsupported',
+    )
 
   const loadData = useCallback(async () => {
     try {
@@ -63,6 +76,37 @@ const Reminders = () => {
     loadData()
   }, [loadData])
 
+  const enableNotifications = async () => {
+    if (!('Notification' in window)) {
+      setError(
+        'Your browser does not support notifications.',
+      )
+
+      return
+    }
+
+    try {
+      const permission =
+        await Notification.requestPermission()
+
+      setNotificationStatus(permission)
+
+      if (permission === 'granted') {
+        new Notification(
+          'Student Task Tracker',
+          {
+            body:
+              'Notifications are now enabled.',
+          },
+        )
+      }
+    } catch {
+      setError(
+        'Unable to request notification permission.',
+      )
+    }
+  }
+
   const openCreate = () => {
     setEditingId(null)
     setForm(emptyReminder)
@@ -79,10 +123,12 @@ const Reminders = () => {
 
     setForm({
       name: reminder.name || '',
-      frequency: reminder.frequency || '',
+      frequency:
+        reminder.frequency || 'Once',
       task: taskId || '',
       sendTime: reminder.sendTime || '',
-      sendType: reminder.sendType || '',
+      sendType:
+        reminder.sendType || 'In App',
     })
 
     setDialogOpen(true)
@@ -105,7 +151,11 @@ const Reminders = () => {
           ? `/api/reminders/${editingId}`
           : '/api/reminders',
         {
-          method: editingId ? 'PUT' : 'POST',
+          method:
+            editingId
+              ? 'PUT'
+              : 'POST',
+
           body: JSON.stringify(form),
         },
       )
@@ -118,14 +168,23 @@ const Reminders = () => {
   }
 
   const deleteReminder = async (id) => {
-    if (!window.confirm('Delete this reminder?')) {
+    if (
+      !window.confirm(
+        'Delete this reminder?',
+      )
+    ) {
       return
     }
 
     try {
-      await apiRequest(`/api/reminders/${id}`, {
-        method: 'DELETE',
-      })
+      setError('')
+
+      await apiRequest(
+        `/api/reminders/${id}`,
+        {
+          method: 'DELETE',
+        },
+      )
 
       await loadData()
     } catch (err) {
@@ -138,18 +197,29 @@ const Reminders = () => {
       reminder.task &&
       typeof reminder.task === 'object'
     ) {
-      return reminder.task.title || 'Task'
+      return (
+        reminder.task.title ||
+        'Task'
+      )
     }
 
     const task = tasks.find(
-      (item) => item._id === reminder.task,
+      (item) =>
+        item._id === reminder.task,
     )
 
-    return task?.title || 'No task selected'
+    return (
+      task?.title ||
+      'No task selected'
+    )
   }
 
   return (
-    <Box sx={{ minHeight: '100vh' }}>
+    <Box
+      sx={{
+        minHeight: '100vh',
+      }}
+    >
       <AppNavigation />
 
       <Container
@@ -161,11 +231,13 @@ const Reminders = () => {
           },
         }}
       >
+        {/* HERO */}
         <Card
           sx={{
             mb: 3,
             border: 0,
             color: '#fff',
+
             background:
               'linear-gradient(120deg, #252b3a 0%, #343b50 62%, #ff4057 145%)',
           }}
@@ -188,15 +260,20 @@ const Reminders = () => {
             <Box
               sx={{
                 display: 'flex',
+
                 flexDirection: {
                   xs: 'column',
                   sm: 'row',
                 },
-                justifyContent: 'space-between',
+
+                justifyContent:
+                  'space-between',
+
                 alignItems: {
                   xs: 'flex-start',
                   sm: 'center',
                 },
+
                 gap: 3,
               }}
             >
@@ -205,7 +282,9 @@ const Reminders = () => {
                   variant="overline"
                   sx={{
                     color: '#ff7180',
+
                     fontWeight: 800,
+
                     letterSpacing: 1.4,
                   }}
                 >
@@ -216,7 +295,9 @@ const Reminders = () => {
                   variant="h4"
                   sx={{
                     color: '#fff',
+
                     fontWeight: 800,
+
                     mb: 0.7,
                   }}
                 >
@@ -225,38 +306,133 @@ const Reminders = () => {
 
                 <Typography
                   sx={{
-                    color: 'rgba(255,255,255,.72)',
+                    color:
+                      'rgba(255,255,255,.72)',
                   }}
                 >
-                  Create reminders for important assignments and deadlines.
+                  Create reminders for
+                  important assignments and
+                  deadlines.
                 </Typography>
               </Box>
 
-              <Button
-                variant="contained"
-                startIcon={<AddIcon />}
-                onClick={openCreate}
-                sx={{
-                  bgcolor: '#ff4057',
-                  color: '#fff',
-                  minWidth: '145px',
-                  height: '42px',
-                  borderRadius: '10px',
-                  textTransform: 'none',
-                  fontWeight: 700,
-                  boxShadow: 'none',
-
-                  '&:hover': {
-                    bgcolor: '#e9364d',
-                    boxShadow: 'none',
-                  },
+              <Stack
+                direction={{
+                  xs: 'column',
+                  sm: 'row',
                 }}
+                spacing={1}
               >
-                Add reminder
-              </Button>
+                {notificationStatus !==
+                  'granted' && (
+                  <Button
+                    variant="outlined"
+                    startIcon={
+                      <NotificationsActiveIcon />
+                    }
+                    onClick={
+                      enableNotifications
+                    }
+                    sx={{
+                      color: '#fff',
+
+                      borderColor:
+                        'rgba(255,255,255,.45)',
+
+                      height: 42,
+
+                      borderRadius: '10px',
+
+                      textTransform: 'none',
+
+                      fontWeight: 700,
+
+                      '&:hover': {
+                        borderColor:
+                          '#fff',
+
+                        bgcolor:
+                          'rgba(255,255,255,.08)',
+                      },
+                    }}
+                  >
+                    Enable notifications
+                  </Button>
+                )}
+
+                <Button
+                  variant="contained"
+                  startIcon={<AddIcon />}
+                  onClick={openCreate}
+                  sx={{
+                    bgcolor: '#ff4057',
+
+                    color: '#fff',
+
+                    minWidth: '145px',
+
+                    height: '42px',
+
+                    borderRadius:
+                      '10px',
+
+                    textTransform: 'none',
+
+                    fontWeight: 700,
+
+                    boxShadow: 'none',
+
+                    '&:hover': {
+                      bgcolor:
+                        '#e9364d',
+
+                      boxShadow: 'none',
+                    },
+                  }}
+                >
+                  Add reminder
+                </Button>
+              </Stack>
             </Box>
           </CardContent>
         </Card>
+
+        {/* NOTIFICATION STATUS */}
+        {notificationStatus ===
+          'granted' && (
+          <Alert
+            severity="success"
+            sx={{ mb: 3 }}
+          >
+            Browser notifications are
+            enabled. Reminders will appear
+            while this application is open.
+          </Alert>
+        )}
+
+        {notificationStatus ===
+          'denied' && (
+          <Alert
+            severity="warning"
+            sx={{ mb: 3 }}
+          >
+            Browser notifications are
+            blocked. Allow notifications
+            for this site in your browser
+            settings.
+          </Alert>
+        )}
+
+        {notificationStatus ===
+          'unsupported' && (
+          <Alert
+            severity="warning"
+            sx={{ mb: 3 }}
+          >
+            This browser does not support
+            desktop notifications.
+          </Alert>
+        )}
 
         {error && (
           <Alert
@@ -267,6 +443,7 @@ const Reminders = () => {
           </Alert>
         )}
 
+        {/* REMINDER LIST */}
         <Box
           sx={{
             display: 'grid',
@@ -291,99 +468,130 @@ const Reminders = () => {
                 <Typography
                   variant="h6"
                   fontWeight={700}
-                  sx={{ mt: 1 }}
+                  sx={{
+                    mt: 1,
+                  }}
                 >
                   No reminders yet
                 </Typography>
 
-                <Typography color="text.secondary">
-                  Create a reminder for an upcoming task.
+                <Typography
+                  color="text.secondary"
+                >
+                  Create a reminder for an
+                  upcoming task.
                 </Typography>
               </CardContent>
             </Card>
           ) : (
-            reminders.map((reminder) => (
-              <Card key={reminder._id}>
-                <CardContent>
-                  <Stack
-                    direction={{
-                      xs: 'column',
-                      sm: 'row',
-                    }}
-                    alignItems={{
-                      sm: 'center',
-                    }}
-                    spacing={2}
-                  >
-                    <NotificationsIcon
-                      sx={{
-                        color: '#ff4057',
-                        fontSize: 34,
+            reminders.map(
+              (reminder) => (
+                <Card
+                  key={reminder._id}
+                >
+                  <CardContent>
+                    <Stack
+                      direction={{
+                        xs: 'column',
+                        sm: 'row',
                       }}
-                    />
-
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Typography
-                        variant="h6"
-                        fontWeight={800}
-                        color="#252b3a"
-                      >
-                        {reminder.name}
-                      </Typography>
-
-                      <Typography color="text.secondary">
-                        Task: {taskName(reminder)}
-                      </Typography>
-
-                      <Typography
-                        variant="body2"
-                        sx={{ mt: 0.8 }}
-                      >
-                        Frequency:{' '}
-                        {reminder.frequency || 'Not set'}
-                      </Typography>
-
-                      <Typography variant="body2">
-                        Time:{' '}
-                        {reminder.sendTime || 'Not set'}
-                      </Typography>
-
-                      <Typography variant="body2">
-                        Type:{' '}
-                        {reminder.sendType || 'Not set'}
-                      </Typography>
-                    </Box>
-
-                    <Box>
-                      <IconButton
-                        onClick={() =>
-                          openEdit(reminder)
-                        }
-                        aria-label="Edit reminder"
-                      >
-                        <EditIcon />
-                      </IconButton>
-
-                      <IconButton
-                        onClick={() =>
-                          deleteReminder(reminder._id)
-                        }
-                        aria-label="Delete reminder"
+                      alignItems={{
+                        sm: 'center',
+                      }}
+                      spacing={2}
+                    >
+                      <NotificationsIcon
                         sx={{
-                          color: '#ff4057',
+                          color:
+                            '#ff4057',
+
+                          fontSize: 34,
+                        }}
+                      />
+
+                      <Box
+                        sx={{
+                          flexGrow: 1,
                         }}
                       >
-                        <DeleteIcon />
-                      </IconButton>
-                    </Box>
-                  </Stack>
-                </CardContent>
-              </Card>
-            ))
+                        <Typography
+                          variant="h6"
+                          fontWeight={800}
+                          color="#252b3a"
+                        >
+                          {reminder.name}
+                        </Typography>
+
+                        <Typography
+                          color="text.secondary"
+                        >
+                          Task:{' '}
+                          {taskName(
+                            reminder,
+                          )}
+                        </Typography>
+
+                        <Typography
+                          variant="body2"
+                          sx={{
+                            mt: 0.8,
+                          }}
+                        >
+                          Frequency:{' '}
+                          {reminder.frequency ||
+                            'Not set'}
+                        </Typography>
+
+                        <Typography variant="body2">
+                          Time:{' '}
+                          {reminder.sendTime ||
+                            'Not set'}
+                        </Typography>
+
+                        <Typography variant="body2">
+                          Type:{' '}
+                          {reminder.sendType ||
+                            'Not set'}
+                        </Typography>
+                      </Box>
+
+                      <Box>
+                        <IconButton
+                          onClick={() =>
+                            openEdit(
+                              reminder,
+                            )
+                          }
+                          aria-label="Edit reminder"
+                        >
+                          <EditIcon />
+                        </IconButton>
+
+                        <IconButton
+                          onClick={() =>
+                            deleteReminder(
+                              reminder._id,
+                            )
+                          }
+                          aria-label="Delete reminder"
+                          sx={{
+                            color:
+                              '#ff4057',
+                          }}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
+                      </Box>
+                    </Stack>
+                  </CardContent>
+                </Card>
+              ),
+            )
           )}
         </Box>
       </Container>
 
+      {/* ADD / EDIT REMINDER */}
       <Dialog
         open={dialogOpen}
         onClose={closeDialog}
@@ -408,22 +616,28 @@ const Reminders = () => {
           <DialogContent
             sx={{
               display: 'grid',
+
               gap: 2,
-              pt: '12px !important',
+
+              pt:
+                '12px !important',
             }}
           >
             <TextField
               label="Reminder name"
               value={form.name}
               required
-              onChange={(e) =>
+              onChange={(event) =>
                 setForm({
                   ...form,
-                  name: e.target.value,
+
+                  name:
+                    event.target.value,
                 })
               }
             />
 
+            {/* TASK */}
             <FormControl fullWidth>
               <InputLabel>
                 Task
@@ -432,10 +646,12 @@ const Reminders = () => {
               <Select
                 value={form.task}
                 label="Task"
-                onChange={(e) =>
+                onChange={(event) =>
                   setForm({
                     ...form,
-                    task: e.target.value,
+
+                    task:
+                      event.target.value,
                   })
                 }
               >
@@ -454,46 +670,90 @@ const Reminders = () => {
               </Select>
             </FormControl>
 
-            <TextField
-              label="Frequency"
-              placeholder="Daily, Weekly, Once..."
-              value={form.frequency}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  frequency: e.target.value,
-                })
-              }
-            />
+            {/* FREQUENCY */}
+            <FormControl
+              fullWidth
+              required
+            >
+              <InputLabel>
+                Frequency
+              </InputLabel>
 
+              <Select
+                value={
+                  form.frequency
+                }
+                label="Frequency"
+                onChange={(event) =>
+                  setForm({
+                    ...form,
+
+                    frequency:
+                      event.target.value,
+                  })
+                }
+              >
+                <MenuItem value="Once">
+                  Once
+                </MenuItem>
+
+                <MenuItem value="Daily">
+                  Daily
+                </MenuItem>
+
+                <MenuItem value="Weekly">
+                  Weekly
+                </MenuItem>
+              </Select>
+            </FormControl>
+
+            {/* TIME */}
             <TextField
               label="Send time"
               type="time"
               value={form.sendTime}
+              required
               slotProps={{
                 inputLabel: {
                   shrink: true,
                 },
               }}
-              onChange={(e) =>
+              onChange={(event) =>
                 setForm({
                   ...form,
-                  sendTime: e.target.value,
+
+                  sendTime:
+                    event.target.value,
                 })
               }
             />
 
-            <TextField
-              label="Send type"
-              placeholder="Example: In App or Email"
-              value={form.sendType}
-              onChange={(e) =>
-                setForm({
-                  ...form,
-                  sendType: e.target.value,
-                })
-              }
-            />
+            {/* SEND TYPE */}
+            <FormControl
+              fullWidth
+              required
+            >
+              <InputLabel>
+                Send type
+              </InputLabel>
+
+              <Select
+                value={form.sendType}
+                label="Send type"
+                onChange={(event) =>
+                  setForm({
+                    ...form,
+
+                    sendType:
+                      event.target.value,
+                  })
+                }
+              >
+                <MenuItem value="In App">
+                  Browser notification
+                </MenuItem>
+              </Select>
+            </FormControl>
           </DialogContent>
 
           <DialogActions
@@ -515,11 +775,14 @@ const Reminders = () => {
               type="submit"
               sx={{
                 bgcolor: '#ff4057',
+
                 fontWeight: 700,
+
                 textTransform: 'none',
 
                 '&:hover': {
-                  bgcolor: '#e9364d',
+                  bgcolor:
+                    '#e9364d',
                 },
               }}
             >

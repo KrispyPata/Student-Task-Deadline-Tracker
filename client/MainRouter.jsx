@@ -8,12 +8,25 @@ import AuthPage from './core/AuthPage'
 import Courses from './core/Courses'
 import Sessions from './core/Sessions'
 import Reminders from './core/Reminders'
+import ReminderNotifier from './core/ReminderNotifier'
 import { getAuth } from './src/auth'
 
 const ProtectedRoute = ({ children }) => {
-  return getAuth()?.token
-    ? children
-    : <Navigate to="/login" replace />
+  if (!getAuth()?.token) {
+    return (
+      <Navigate
+        to="/login"
+        replace
+      />
+    )
+  }
+
+  return (
+    <>
+      <ReminderNotifier />
+      {children}
+    </>
+  )
 }
 
 const MainRouter = () => {
@@ -21,12 +34,16 @@ const MainRouter = () => {
     <Routes>
       <Route
         path="/login"
-        element={<AuthPage mode="login" />}
+        element={
+          <AuthPage mode="login" />
+        }
       />
 
       <Route
         path="/register"
-        element={<AuthPage mode="register" />}
+        element={
+          <AuthPage mode="register" />
+        }
       />
 
       <Route
@@ -67,7 +84,12 @@ const MainRouter = () => {
 
       <Route
         path="*"
-        element={<Navigate to="/" replace />}
+        element={
+          <Navigate
+            to="/"
+            replace
+          />
+        }
       />
     </Routes>
   )

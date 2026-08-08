@@ -14,7 +14,7 @@ import NotificationsIcon from '@mui/icons-material/Notifications'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { clearAuth, getAuth } from '../src/auth'
-import logo from '../src/assets/student-task-tracker-logo.png'
+import logo from '../src/assets/node-nomads-logo.png'
 
 const AppNavigation = () => {
   const navigate = useNavigate()
