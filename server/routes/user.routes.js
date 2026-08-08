@@ -4,15 +4,29 @@ import authCtrl from '../controllers/auth.controller.js'
 
 const router = express.Router()
 
-router.route('/api/users')
+/*
+ * Registration
+ */
+router
+  .route('/api/users')
   .post(userCtrl.create)
-  .get(authCtrl.requireSignin, userCtrl.list)
 
-router.route('/api/users/:userId')
-  .get(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.read)
-  .put(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.update)
-  .delete(authCtrl.requireSignin, authCtrl.hasAuthorization, userCtrl.remove)
-
-router.param('userId', userCtrl.userByID)
+/*
+ * Current user's profile CRUD
+ */
+router
+  .route('/api/users/:userId')
+  .get(
+    authCtrl.requireSignin,
+    userCtrl.read,
+  )
+  .put(
+    authCtrl.requireSignin,
+    userCtrl.update,
+  )
+  .delete(
+    authCtrl.requireSignin,
+    userCtrl.remove,
+  )
 
 export default router

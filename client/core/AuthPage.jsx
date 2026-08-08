@@ -31,7 +31,8 @@ const AuthPage = ({ mode }) => {
   const updateField = (event) => {
     setForm({
       ...form,
-      [event.target.name]: event.target.value,
+      [event.target.name]:
+        event.target.value,
     })
   }
 
@@ -45,6 +46,7 @@ const AuthPage = ({ mode }) => {
       if (isRegister) {
         await apiRequest('/api/users', {
           method: 'POST',
+
           body: JSON.stringify({
             name: form.name,
             email: form.email,
@@ -53,16 +55,22 @@ const AuthPage = ({ mode }) => {
         })
       }
 
-      const auth = await apiRequest('/auth/signin', {
-        method: 'POST',
-        body: JSON.stringify({
-          email: form.email,
-          password: form.password,
-        }),
-      })
+      const auth =
+        await apiRequest(
+          '/auth/signin',
+          {
+            method: 'POST',
+
+            body: JSON.stringify({
+              email: form.email,
+              password: form.password,
+            }),
+          },
+        )
 
       saveAuth(auth)
-      navigate('/')
+
+      navigate('/dashboard')
     } catch (err) {
       setError(err.message)
     } finally {
@@ -74,21 +82,24 @@ const AuthPage = ({ mode }) => {
     <Box
       sx={{
         minHeight: '100vh',
+
         display: 'flex',
         alignItems: 'center',
+
         background: `
           radial-gradient(
             circle at 10% 20%,
-            rgba(255, 64, 87, 0.09),
+            rgba(255,64,87,.09),
             transparent 30%
           ),
           radial-gradient(
             circle at 90% 80%,
-            rgba(37, 43, 58, 0.08),
+            rgba(37,43,58,.08),
             transparent 32%
           ),
           #f7f8fb
         `,
+
         py: {
           xs: 4,
           md: 6,
@@ -99,11 +110,16 @@ const AuthPage = ({ mode }) => {
         <Box
           sx={{
             display: 'grid',
+
             gridTemplateColumns: {
               xs: '1fr',
-              md: 'minmax(420px, 0.9fr) minmax(420px, 1.1fr)',
+
+              md:
+                'minmax(420px,.9fr) minmax(420px,1.1fr)',
             },
+
             alignItems: 'center',
+
             gap: {
               xs: 5,
               md: 8,
@@ -115,26 +131,36 @@ const AuthPage = ({ mode }) => {
             sx={{
               width: '100%',
               maxWidth: 520,
+
               justifySelf: {
                 xs: 'center',
                 md: 'start',
               },
+
               borderRadius: 4,
               overflow: 'hidden',
-              border: '1px solid rgba(37, 43, 58, 0.06)',
+
+              border:
+                '1px solid rgba(37,43,58,.06)',
+
               boxShadow:
-                '0 20px 60px rgba(37, 43, 58, 0.10)',
+                '0 20px 60px rgba(37,43,58,.10)',
+
               position: 'relative',
 
               '&::before': {
                 content: '""',
+
                 position: 'absolute',
+
                 top: 0,
                 left: 0,
                 right: 0,
+
                 height: 7,
+
                 background:
-                  'linear-gradient(90deg, #ff4057 0%, #ff7180 48%, #252b3a 100%)',
+                  'linear-gradient(90deg,#ff4057 0%,#ff7180 48%,#252b3a 100%)',
               },
             }}
           >
@@ -169,8 +195,10 @@ const AuthPage = ({ mode }) => {
                 sx={{
                   mt: 1,
                   mb: 1,
+
                   fontWeight: 800,
-                  color: '#353344',
+
+                  color: '#252b3a',
                 }}
               >
                 {isRegister
@@ -214,15 +242,15 @@ const AuthPage = ({ mode }) => {
                   <TextField
                     name="name"
                     label="Name"
+
                     value={form.name}
-                    onChange={updateField}
+
+                    onChange={
+                      updateField
+                    }
+
                     required
                     fullWidth
-                    sx={{
-                      '& .MuiOutlinedInput-root': {
-                        borderRadius: 2.5,
-                      },
-                    }}
                   />
                 )}
 
@@ -230,56 +258,67 @@ const AuthPage = ({ mode }) => {
                   name="email"
                   label="Email"
                   type="email"
+
                   value={form.email}
-                  onChange={updateField}
+
+                  onChange={
+                    updateField
+                  }
+
                   required
                   fullWidth
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2.5,
-                    },
-                  }}
                 />
 
                 <TextField
                   name="password"
                   label="Password"
                   type="password"
-                  value={form.password}
-                  onChange={updateField}
+
+                  value={
+                    form.password
+                  }
+
+                  onChange={
+                    updateField
+                  }
+
                   required
                   fullWidth
+
                   inputProps={{
                     minLength: 6,
-                  }}
-                  sx={{
-                    '& .MuiOutlinedInput-root': {
-                      borderRadius: 2.5,
-                    },
                   }}
                 />
 
                 <Button
                   type="submit"
+
                   variant="contained"
+
                   size="large"
+
                   disabled={loading}
+
                   sx={{
                     mt: 0.5,
+
                     py: 1.45,
+
                     borderRadius: 2.5,
+
                     bgcolor: '#ff4057',
+
                     color: '#fff',
+
                     fontWeight: 800,
-                    fontSize: '0.95rem',
+
+                    fontSize: '.95rem',
+
                     textTransform: 'none',
-                    boxShadow:
-                      '0 8px 20px rgba(255, 64, 87, 0.22)',
 
                     '&:hover': {
-                      bgcolor: '#e9364d',
-                      boxShadow:
-                        '0 10px 24px rgba(255, 64, 87, 0.28)',
+                      bgcolor:
+                        '#e9364d',
                     },
                   }}
                 >
@@ -304,6 +343,7 @@ const AuthPage = ({ mode }) => {
                 <Link
                   component="button"
                   type="button"
+
                   onClick={() =>
                     navigate(
                       isRegister
@@ -311,11 +351,10 @@ const AuthPage = ({ mode }) => {
                         : '/register',
                     )
                   }
+
                   sx={{
                     color: '#ff4057',
                     fontWeight: 700,
-                    textDecorationColor:
-                      'rgba(255, 64, 87, 0.4)',
                   }}
                 >
                   {isRegister
@@ -323,6 +362,22 @@ const AuthPage = ({ mode }) => {
                     : 'Register'}
                 </Link>
               </Typography>
+
+              <Button
+                onClick={() =>
+                  navigate('/')
+                }
+                sx={{
+                  mt: 2,
+                  p: 0,
+                  color: '#697083',
+                  textTransform: 'none',
+                  justifyContent:
+                    'flex-start',
+                }}
+              >
+                ← Back to home
+              </Button>
             </CardContent>
           </Card>
 
@@ -330,17 +385,19 @@ const AuthPage = ({ mode }) => {
           <Box
             sx={{
               display: 'flex',
+
               flexDirection: 'column',
+
               alignItems: 'center',
-              justifyContent: 'center',
+
+              justifyContent:
+                'center',
+
               textAlign: 'center',
+
               minHeight: {
                 xs: 'auto',
                 md: 540,
-              },
-              px: {
-                xs: 1,
-                md: 3,
               },
             }}
           >
@@ -348,68 +405,46 @@ const AuthPage = ({ mode }) => {
               component="img"
               src={logo}
               alt="Student Task Tracker"
+
               sx={{
                 width: {
                   xs: 260,
                   sm: 340,
                   md: 460,
                 },
+
                 maxWidth: '100%',
+
                 height: 'auto',
+
                 objectFit: 'contain',
+
                 mb: 3,
+
                 filter:
-                  'drop-shadow(0 18px 30px rgba(37, 43, 58, 0.14))',
+                  'drop-shadow(0 18px 30px rgba(37,43,58,.14))',
               }}
             />
 
             <Typography
               sx={{
                 color: '#697083',
+
                 maxWidth: 500,
+
                 fontSize: {
                   xs: '1rem',
                   md: '1.1rem',
                 },
+
                 lineHeight: 1.7,
               }}
             >
-              Organize assignments, monitor deadlines,
-              and keep track of your academic progress
-              in one place.
+              Organize assignments,
+              monitor deadlines, and keep
+              track of your academic
+              progress in one place.
             </Typography>
-
-            <Box
-              sx={{
-                display: 'flex',
-                flexWrap: 'wrap',
-                gap: 1,
-                mt: 3,
-                justifyContent: 'center',
-              }}
-            >
-              {[
-                'Assignments',
-                'Deadlines',
-                'Progress',
-              ].map((item) => (
-                <Box
-                  key={item}
-                  sx={{
-                    px: 1.8,
-                    py: 0.8,
-                    borderRadius: 99,
-                    bgcolor:
-                      'rgba(255, 64, 87, 0.08)',
-                    color: '#ff4057',
-                    fontSize: '0.8rem',
-                    fontWeight: 700,
-                  }}
-                >
-                  {item}
-                </Box>
-              ))}
-            </Box>
           </Box>
         </Box>
       </Container>

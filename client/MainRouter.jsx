@@ -3,11 +3,13 @@ import {
   Route,
   Routes,
 } from 'react-router-dom'
+import LandingPage from './core/LandingPage'
 import Home from './core/Home'
 import AuthPage from './core/AuthPage'
 import Courses from './core/Courses'
 import Sessions from './core/Sessions'
 import Reminders from './core/Reminders'
+import Profile from './core/Profile'
 import ReminderNotifier from './core/ReminderNotifier'
 import { getAuth } from './src/auth'
 
@@ -32,6 +34,13 @@ const ProtectedRoute = ({ children }) => {
 const MainRouter = () => {
   return (
     <Routes>
+      {/* PUBLIC LANDING PAGE */}
+      <Route
+        path="/"
+        element={<LandingPage />}
+      />
+
+      {/* AUTH */}
       <Route
         path="/login"
         element={
@@ -46,8 +55,9 @@ const MainRouter = () => {
         }
       />
 
+      {/* DASHBOARD */}
       <Route
-        path="/"
+        path="/dashboard"
         element={
           <ProtectedRoute>
             <Home />
@@ -55,6 +65,7 @@ const MainRouter = () => {
         }
       />
 
+      {/* COURSES */}
       <Route
         path="/courses"
         element={
@@ -64,6 +75,7 @@ const MainRouter = () => {
         }
       />
 
+      {/* SESSIONS */}
       <Route
         path="/sessions"
         element={
@@ -73,11 +85,22 @@ const MainRouter = () => {
         }
       />
 
+      {/* REMINDERS */}
       <Route
         path="/reminders"
         element={
           <ProtectedRoute>
             <Reminders />
+          </ProtectedRoute>
+        }
+      />
+
+      {/* PROFILE */}
+      <Route
+        path="/profile"
+        element={
+          <ProtectedRoute>
+            <Profile />
           </ProtectedRoute>
         }
       />

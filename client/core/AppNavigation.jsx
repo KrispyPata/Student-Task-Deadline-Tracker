@@ -11,9 +11,13 @@ import DashboardIcon from '@mui/icons-material/Dashboard'
 import MenuBookIcon from '@mui/icons-material/MenuBook'
 import EventIcon from '@mui/icons-material/Event'
 import NotificationsIcon from '@mui/icons-material/Notifications'
+import PersonIcon from '@mui/icons-material/Person'
 import LogoutIcon from '@mui/icons-material/Logout'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { clearAuth, getAuth } from '../src/auth'
+import {
+  clearAuth,
+  getAuth,
+} from '../src/auth'
 import logo from '../src/assets/node-nomads-logo.png'
 
 const AppNavigation = () => {
@@ -24,7 +28,7 @@ const AppNavigation = () => {
   const links = [
     {
       label: 'Dashboard',
-      path: '/',
+      path: '/dashboard',
       icon: <DashboardIcon fontSize="small" />,
     },
     {
@@ -42,6 +46,11 @@ const AppNavigation = () => {
       path: '/reminders',
       icon: <NotificationsIcon fontSize="small" />,
     },
+    {
+      label: 'Profile',
+      path: '/profile',
+      icon: <PersonIcon fontSize="small" />,
+    },
   ]
 
   const logout = () => {
@@ -55,7 +64,8 @@ const AppNavigation = () => {
       elevation={0}
       sx={{
         bgcolor: '#252b3a',
-        borderBottom: '1px solid rgba(255,255,255,.08)',
+        borderBottom:
+          '1px solid rgba(255,255,255,.08)',
       }}
     >
       <Toolbar
@@ -68,6 +78,7 @@ const AppNavigation = () => {
           gap: 3,
         }}
       >
+        {/* BRAND */}
         <Stack
           direction="row"
           alignItems="center"
@@ -76,7 +87,9 @@ const AppNavigation = () => {
             cursor: 'pointer',
             flexShrink: 0,
           }}
-          onClick={() => navigate('/')}
+          onClick={() =>
+            navigate('/')
+          }
         >
           <Box
             component="img"
@@ -94,7 +107,7 @@ const AppNavigation = () => {
             sx={{
               display: {
                 xs: 'none',
-                sm: 'block',
+                lg: 'block',
               },
             }}
           >
@@ -121,12 +134,14 @@ const AppNavigation = () => {
           </Box>
         </Stack>
 
+        {/* NAVIGATION LINKS */}
         <Stack
           direction="row"
-          spacing={0.6}
+          spacing={0.5}
           sx={{
             flexGrow: 1,
             overflowX: 'auto',
+
             justifyContent: {
               xs: 'flex-start',
               md: 'center',
@@ -139,30 +154,38 @@ const AppNavigation = () => {
         >
           {links.map((link) => {
             const active =
-              link.path === '/'
-                ? location.pathname === '/'
-                : location.pathname.startsWith(link.path)
+              location.pathname === link.path
 
             return (
               <Button
                 key={link.path}
                 startIcon={link.icon}
-                onClick={() => navigate(link.path)}
+                onClick={() =>
+                  navigate(link.path)
+                }
                 sx={{
                   color: active
                     ? '#fff'
                     : 'rgba(255,255,255,.65)',
+
                   bgcolor: active
                     ? 'rgba(255,64,87,.18)'
                     : 'transparent',
+
                   borderRadius: 2,
-                  px: 1.6,
+                  px: 1.5,
+
                   textTransform: 'none',
-                  fontWeight: active ? 700 : 500,
+
+                  fontWeight: active
+                    ? 700
+                    : 500,
+
                   whiteSpace: 'nowrap',
 
                   '&:hover': {
-                    bgcolor: 'rgba(255,64,87,.14)',
+                    bgcolor:
+                      'rgba(255,64,87,.14)',
                     color: '#fff',
                   },
                 }}
@@ -173,11 +196,14 @@ const AppNavigation = () => {
           })}
         </Stack>
 
+        {/* CURRENT USER */}
         <Stack
           direction="row"
           alignItems="center"
           spacing={1.3}
-          sx={{ flexShrink: 0 }}
+          sx={{
+            flexShrink: 0,
+          }}
         >
           <Box
             sx={{
@@ -213,7 +239,10 @@ const AppNavigation = () => {
             aria-label="Log out"
             sx={{
               color: '#fff',
-              border: '1px solid rgba(255,255,255,.12)',
+
+              border:
+                '1px solid rgba(255,255,255,.12)',
+
               width: 40,
               height: 40,
 

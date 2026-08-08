@@ -1,76 +1,203 @@
-import User from "../models/user.model.js";
-import extend from "lodash/extend.js";
-import errorHandler from "./error.controller.js";
+import User from '../models/user.model.js'
+
+const cleanUser = (user) => {
+  const data = user.toObject
+    ? user.toObject()
+    : { ...user }
+
+  delete data.hashed_password
+  delete data.salt
+  delete data.password
+
+  return data
+}
+
 const create = async (req, res) => {
-  const user = new User(req.body);
   try {
-    await user.save();
-    return res.status(200).json({
-      message: "Successfully signed up!",
-    });
+    const user = new User(req.body)
+
+    const savedUser =
+      await user.save()
+
+    return res
+      .status(201)
+      .json(
+        cleanUser(savedUser),
+      )
   } catch (err) {
-    return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
-    });
+    return res
+      .status(400)
+      .json({
+        error: err.message,
+      })
   }
-};
+}
+
 const list = async (req, res) => {
   try {
-    let users = await User.find().select("name email updated created");
-    res.json(users);
+    const users =
+      await User.find()
+        .select(
+          '-hashed_password -salt',
+        )
+
+    return res.json(users)
   } catch (err) {
-    return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
-    });
+    return res
+      .status(400)
+      .json({
+        error: err.message,
+      })
   }
-};
-const userByID = async (req, res, next, id) => {
+}
+
+const read = async (req, res) => {
   try {
-    let user = await User.findById(id);
-    if (!user)
-      return res.status(400).json({
-        error: "User not found",
-      });
-    req.profile = user;
-    next();
+    const user =
+      await User.findById(
+        req.params.userId,
+      )
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({
+          error:
+            'User not found',
+        })
+    }
+
+    /*
+     * User may only access
+     * their own profile.
+     */
+    if (
+      String(user._id) !==
+      String(req.auth._id)
+    ) {
+      return res
+        .status(403)
+        .json({
+          error:
+            'Not authorized',
+        })
+    }
+
+    return res.json(
+      cleanUser(user),
+    )
   } catch (err) {
-    return res.status(400).json({
-      error: "Could not retrieve user",
-    });
+    return res
+      .status(400)
+      .json({
+        error: err.message,
+      })
   }
-};
-const read = (req, res) => {
-  req.profile.hashed_password = undefined;
-  req.profile.salt = undefined;
-  return res.json(req.profile);
-};
+}
+
 const update = async (req, res) => {
   try {
-    let user = req.profile;
-    user = extend(user, req.body);
-    user.updated = Date.now();
-    await user.save();
-    user.hashed_password = undefined;
-    user.salt = undefined;
-    res.json(user);
+    /*
+     * User may only update
+     * their own profile.
+     */
+    if (
+      String(
+        req.params.userId,
+      ) !==
+      String(req.auth._id)
+    ) {
+      return res
+        .status(403)
+        .json({
+          error:
+            'Not authorized',
+        })
+    }
+
+    const updates = {
+      name: req.body.name,
+      email: req.body.email,
+    }
+
+    const user =
+      await User.findByIdAndUpdate(
+        req.params.userId,
+        updates,
+        {
+          new: true,
+          runValidators: true,
+        },
+      )
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({
+          error:
+            'User not found',
+        })
+    }
+
+    return res.json(
+      cleanUser(user),
+    )
   } catch (err) {
-    return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
-    });
+    return res
+      .status(400)
+      .json({
+        error: err.message,
+      })
   }
-};
+}
+
 const remove = async (req, res) => {
   try {
-    let user = req.profile;
-    let deletedUser = await user.deleteOne();
-    deletedUser.hashed_password = undefined;
-    deletedUser.salt = undefined;
-    res.json(deletedUser);
-  } catch (err) {
-    return res.status(400).json({
-      error: errorHandler.getErrorMessage(err),
-    });
-  }
-};
-export default { create, userByID, read, list, remove, update };
+    if (
+      String(
+        req.params.userId,
+      ) !==
+      String(req.auth._id)
+    ) {
+      return res
+        .status(403)
+        .json({
+          error:
+            'Not authorized',
+        })
+    }
 
+    const user =
+      await User.findByIdAndDelete(
+        req.params.userId,
+      )
+
+    if (!user) {
+      return res
+        .status(404)
+        .json({
+          error:
+            'User not found',
+        })
+    }
+
+    return res.json({
+      message:
+        'Account deleted successfully',
+    })
+  } catch (err) {
+    return res
+      .status(400)
+      .json({
+        error: err.message,
+      })
+  }
+}
+
+export default {
+  create,
+  list,
+  read,
+  update,
+  remove,
+}
