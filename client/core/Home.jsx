@@ -39,36 +39,45 @@ const statusStyles = {
     bgcolor: '#eef0f4',
     color: '#4d5568',
   },
-
   'In Progress': {
     bgcolor: '#fff0df',
     color: '#a35d12',
   },
-
   Done: {
     bgcolor: '#e6f6ef',
     color: '#237a56',
   },
 }
 
+const animatedCard = {
+  transition:
+    'transform 0.22s ease, box-shadow 0.22s ease',
+
+  '&:hover': {
+    transform: 'translateY(-3px)',
+    boxShadow:
+      '0 12px 30px rgba(37,43,58,.12)',
+  },
+
+  '@media (prefers-reduced-motion: reduce)': {
+    transition: 'none',
+
+    '&:hover': {
+      transform: 'none',
+    },
+  },
+}
+
 const Home = () => {
   const [tasks, setTasks] = useState([])
-
-  // Courses loaded from the Courses collection
   const [availableCourses, setAvailableCourses] = useState([])
-
   const [form, setForm] = useState(emptyTask)
   const [editingId, setEditingId] = useState(null)
   const [dialogOpen, setDialogOpen] = useState(false)
-
   const [statusFilter, setStatusFilter] = useState('All')
   const [courseFilter, setCourseFilter] = useState('All')
-
   const [error, setError] = useState('')
 
-  /*
-   * LOAD TASKS
-   */
   const loadTasks = useCallback(async () => {
     try {
       const data = await apiRequest('/api/tasks')
@@ -78,11 +87,6 @@ const Home = () => {
     }
   }, [])
 
-  /*
-   * LOAD COURSES
-   *
-   * These courses are used in the Add/Edit Task dropdown.
-   */
   const loadCourses = useCallback(async () => {
     try {
       const data = await apiRequest('/api/courses')
@@ -92,9 +96,6 @@ const Home = () => {
     }
   }, [])
 
-  /*
-   * LOAD DASHBOARD DATA
-   */
   useEffect(() => {
     const loadDashboardData = async () => {
       setError('')
@@ -108,12 +109,6 @@ const Home = () => {
     loadDashboardData()
   }, [loadTasks, loadCourses])
 
-  /*
-   * COURSE FILTER OPTIONS
-   *
-   * We use courses from existing tasks here so older tasks
-   * can still be filtered even if their course was deleted.
-   */
   const taskCourses = useMemo(
     () => [
       ...new Set(
@@ -125,9 +120,6 @@ const Home = () => {
     [tasks],
   )
 
-  /*
-   * FILTERED TASKS
-   */
   const filteredTasks = tasks.filter(
     (task) =>
       (statusFilter === 'All' ||
@@ -136,9 +128,6 @@ const Home = () => {
         task.course === courseFilter),
   )
 
-  /*
-   * DASHBOARD COUNTERS
-   */
   const completedCount = tasks.filter(
     (task) => task.status === 'Done',
   ).length
@@ -147,22 +136,15 @@ const Home = () => {
     (task) => task.status === 'In Progress',
   ).length
 
-  /*
-   * OPEN ADD TASK
-   */
   const openCreate = async () => {
     setEditingId(null)
     setForm(emptyTask)
 
-    // Refresh courses before opening
     await loadCourses()
 
     setDialogOpen(true)
   }
 
-  /*
-   * OPEN EDIT TASK
-   */
   const openEdit = async (task) => {
     await loadCourses()
 
@@ -179,18 +161,12 @@ const Home = () => {
     setDialogOpen(true)
   }
 
-  /*
-   * CLOSE DIALOG
-   */
   const closeDialog = () => {
     setDialogOpen(false)
     setEditingId(null)
     setForm(emptyTask)
   }
 
-  /*
-   * CREATE / UPDATE TASK
-   */
   const saveTask = async (event) => {
     event.preventDefault()
 
@@ -208,22 +184,14 @@ const Home = () => {
       )
 
       closeDialog()
-
       await loadTasks()
     } catch (err) {
       setError(err.message)
     }
   }
 
-  /*
-   * DELETE TASK
-   */
   const deleteTask = async (taskId) => {
-    const confirmed = window.confirm(
-      'Delete this task?',
-    )
-
-    if (!confirmed) {
+    if (!window.confirm('Delete this task?')) {
       return
     }
 
@@ -240,10 +208,6 @@ const Home = () => {
     }
   }
 
-  /*
-   * Check if an older task contains a course
-   * that no longer exists in the Courses collection.
-   */
   const hasLegacyCourse =
     form.course &&
     !availableCourses.some(
@@ -252,7 +216,6 @@ const Home = () => {
 
   return (
     <Box sx={{ minHeight: '100vh' }}>
-      {/* SHARED NAVIGATION */}
       <AppNavigation />
 
       <Container
@@ -262,16 +225,54 @@ const Home = () => {
             xs: 3,
             md: 5,
           },
+
+          animation:
+            'pageEnter .38s ease both',
+
+          '@keyframes pageEnter': {
+            from: {
+              opacity: 0,
+              transform: 'translateY(12px)',
+            },
+
+            to: {
+              opacity: 1,
+              transform: 'translateY(0)',
+            },
+          },
+
+          '@media (prefers-reduced-motion: reduce)': {
+            animation: 'none',
+          },
         }}
       >
-        {/* HERO */}
         <Card
           sx={{
             mb: 3,
             border: 0,
             color: '#fff',
+
             background:
               'linear-gradient(120deg, #252b3a 0%, #343b50 62%, #ff4057 145%)',
+
+            animation:
+              'heroEnter .45s ease both',
+
+            '@keyframes heroEnter': {
+              from: {
+                opacity: 0,
+                transform: 'translateY(-8px)',
+              },
+
+              to: {
+                opacity: 1,
+                transform: 'translateY(0)',
+              },
+            },
+
+            '@media (prefers-reduced-motion: reduce)': {
+              animation: 'none',
+            },
           }}
         >
           <CardContent
@@ -292,15 +293,19 @@ const Home = () => {
             <Box
               sx={{
                 display: 'flex',
+
                 flexDirection: {
                   xs: 'column',
                   sm: 'row',
                 },
+
                 alignItems: {
                   xs: 'flex-start',
                   sm: 'center',
                 },
+
                 justifyContent: 'space-between',
+
                 width: '100%',
                 gap: 3,
               }}
@@ -335,11 +340,11 @@ const Home = () => {
 
                 <Typography
                   sx={{
-                    color: 'rgba(255,255,255,.72)',
+                    color:
+                      'rgba(255,255,255,.72)',
                   }}
                 >
-                  Keep every course, deadline, and
-                  progress update in one place.
+                  Keep every course, deadline, and progress update in one place.
                 </Typography>
               </Box>
 
@@ -351,34 +356,40 @@ const Home = () => {
                   bgcolor: '#ff4057',
                   color: '#fff',
 
-                  width: '110px',
-                  minWidth: '110px',
+                  minWidth: '125px',
                   height: '42px',
 
-                  px: 1.5,
-                  py: 0,
+                  px: 2,
 
                   borderRadius: '10px',
 
-                  fontSize: '0.82rem',
+                  fontSize: '0.85rem',
                   fontWeight: 700,
-                  lineHeight: 1,
 
                   textTransform: 'none',
                   whiteSpace: 'nowrap',
 
-                  flexGrow: 0,
-                  flexShrink: 0,
-
                   boxShadow: 'none',
+
+                  transition:
+                    'transform .2s ease, background-color .2s ease',
 
                   '&:hover': {
                     bgcolor: '#e9364d',
                     boxShadow: 'none',
+                    transform: 'translateY(-2px)',
                   },
 
                   '& .MuiButton-startIcon': {
-                    marginRight: '5px',
+                    marginRight: '6px',
+                  },
+
+                  '@media (prefers-reduced-motion: reduce)': {
+                    transition: 'none',
+
+                    '&:hover': {
+                      transform: 'none',
+                    },
                   },
                 }}
               >
@@ -388,7 +399,6 @@ const Home = () => {
           </CardContent>
         </Card>
 
-        {/* ERROR MESSAGE */}
         {error && (
           <Alert
             severity="error"
@@ -398,14 +408,15 @@ const Home = () => {
           </Alert>
         )}
 
-        {/* STATISTICS */}
         <Box
           sx={{
             display: 'grid',
+
             gridTemplateColumns: {
               xs: '1fr',
               sm: 'repeat(3, 1fr)',
             },
+
             gap: 2,
             mb: 3,
           }}
@@ -415,7 +426,10 @@ const Home = () => {
             ['In progress', activeCount],
             ['Completed', completedCount],
           ].map(([label, value], index) => (
-            <Card key={label}>
+            <Card
+              key={label}
+              sx={animatedCard}
+            >
               <CardContent sx={{ p: 2.5 }}>
                 <Typography
                   color="text.secondary"
@@ -445,8 +459,12 @@ const Home = () => {
           ))}
         </Box>
 
-        {/* FILTERS */}
-        <Card sx={{ mb: 3 }}>
+        <Card
+          sx={{
+            mb: 3,
+            ...animatedCard,
+          }}
+        >
           <CardContent>
             <Stack
               direction={{
@@ -455,14 +473,11 @@ const Home = () => {
               }}
               spacing={2}
             >
-              {/* STATUS FILTER */}
               <FormControl
                 fullWidth
                 size="small"
               >
-                <InputLabel>
-                  Status
-                </InputLabel>
+                <InputLabel>Status</InputLabel>
 
                 <Select
                   value={statusFilter}
@@ -489,14 +504,11 @@ const Home = () => {
                 </Select>
               </FormControl>
 
-              {/* COURSE FILTER */}
               <FormControl
                 fullWidth
                 size="small"
               >
-                <InputLabel>
-                  Course
-                </InputLabel>
+                <InputLabel>Course</InputLabel>
 
                 <Select
                   value={courseFilter}
@@ -525,7 +537,6 @@ const Home = () => {
           </CardContent>
         </Card>
 
-        {/* TASK LIST */}
         <Box
           sx={{
             display: 'grid',
@@ -533,7 +544,7 @@ const Home = () => {
           }}
         >
           {filteredTasks.length === 0 ? (
-            <Card>
+            <Card sx={animatedCard}>
               <CardContent
                 sx={{
                   py: 7,
@@ -576,14 +587,16 @@ const Home = () => {
                   color="text.secondary"
                   sx={{ mt: 0.5 }}
                 >
-                  Add an assignment or change your
-                  filters.
+                  Add an assignment or change your filters.
                 </Typography>
               </CardContent>
             </Card>
           ) : (
             filteredTasks.map((task) => (
-              <Card key={task._id}>
+              <Card
+                key={task._id}
+                sx={animatedCard}
+              >
                 <CardContent
                   sx={{
                     p: {
@@ -602,13 +615,15 @@ const Home = () => {
                     }}
                     gap={2}
                   >
-                    {/* RED SIDE BAR */}
                     <Box
                       sx={{
                         width: 5,
-                        alignSelf: 'stretch',
 
-                        bgcolor: '#ff4057',
+                        alignSelf:
+                          'stretch',
+
+                        bgcolor:
+                          '#ff4057',
 
                         borderRadius: 99,
 
@@ -616,7 +631,6 @@ const Home = () => {
                       }}
                     />
 
-                    {/* TASK INFORMATION */}
                     <Box
                       sx={{
                         flexGrow: 1,
@@ -636,7 +650,6 @@ const Home = () => {
 
                       <Typography color="text.secondary">
                         {task.course} · Due{' '}
-
                         {new Date(
                           task.dueDate,
                         ).toLocaleDateString()}
@@ -656,19 +669,17 @@ const Home = () => {
                       )}
                     </Box>
 
-                    {/* STATUS */}
                     <Chip
                       label={task.status}
                       sx={{
                         ...statusStyles[
-                          task.status
+                        task.status
                         ],
 
                         fontWeight: 700,
                       }}
                     />
 
-                    {/* ACTION BUTTONS */}
                     <Box>
                       <IconButton
                         onClick={() =>
@@ -677,6 +688,14 @@ const Home = () => {
                         aria-label="Edit task"
                         sx={{
                           color: '#252b3a',
+
+                          transition:
+                            'transform .18s ease',
+
+                          '&:hover': {
+                            transform:
+                              'scale(1.08)',
+                          },
                         }}
                       >
                         <EditIcon />
@@ -691,6 +710,14 @@ const Home = () => {
                         aria-label="Delete task"
                         sx={{
                           color: '#ff4057',
+
+                          transition:
+                            'transform .18s ease',
+
+                          '&:hover': {
+                            transform:
+                              'scale(1.08)',
+                          },
                         }}
                       >
                         <DeleteIcon />
@@ -704,7 +731,6 @@ const Home = () => {
         </Box>
       </Container>
 
-      {/* ADD / EDIT TASK DIALOG */}
       <Dialog
         open={dialogOpen}
         onClose={closeDialog}
@@ -733,27 +759,24 @@ const Home = () => {
               pt: '12px !important',
             }}
           >
-            {/* ASSIGNMENT NAME */}
             <TextField
               label="Assignment / task"
               value={form.title}
               onChange={(event) =>
                 setForm({
                   ...form,
-                  title: event.target.value,
+                  title:
+                    event.target.value,
                 })
               }
               required
             />
 
-            {/* COURSE DROPDOWN */}
             <FormControl
               fullWidth
               required
             >
-              <InputLabel>
-                Course
-              </InputLabel>
+              <InputLabel>Course</InputLabel>
 
               <Select
                 value={form.course}
@@ -761,11 +784,11 @@ const Home = () => {
                 onChange={(event) =>
                   setForm({
                     ...form,
-                    course: event.target.value,
+                    course:
+                      event.target.value,
                   })
                 }
               >
-                {/* OLD COURSE SUPPORT */}
                 {hasLegacyCourse && (
                   <MenuItem
                     value={form.course}
@@ -787,22 +810,20 @@ const Home = () => {
               </Select>
             </FormControl>
 
-            {/* MESSAGE IF USER HAS NO COURSES */}
-            {availableCourses.length === 0 && (
-              <Alert severity="info">
-                You currently have no courses. Go to
-                the Courses page and add a course
-                before creating an assignment.
-              </Alert>
-            )}
+            {availableCourses.length ===
+              0 && (
+                <Alert severity="info">
+                  You currently have no courses. Go to the Courses page and add a course before creating an assignment.
+                </Alert>
+              )}
 
-            {/* DESCRIPTION */}
             <TextField
               label="Description"
               value={form.description}
               onChange={(event) =>
                 setForm({
                   ...form,
+
                   description:
                     event.target.value,
                 })
@@ -812,7 +833,6 @@ const Home = () => {
               placeholder="Optional notes about this assignment"
             />
 
-            {/* DUE DATE */}
             <TextField
               label="Due date"
               type="date"
@@ -820,6 +840,7 @@ const Home = () => {
               onChange={(event) =>
                 setForm({
                   ...form,
+
                   dueDate:
                     event.target.value,
                 })
@@ -832,11 +853,8 @@ const Home = () => {
               required
             />
 
-            {/* STATUS */}
             <FormControl>
-              <InputLabel>
-                Status
-              </InputLabel>
+              <InputLabel>Status</InputLabel>
 
               <Select
                 value={form.status}
@@ -844,6 +862,7 @@ const Home = () => {
                 onChange={(event) =>
                   setForm({
                     ...form,
+
                     status:
                       event.target.value,
                   })
@@ -865,11 +884,7 @@ const Home = () => {
             </FormControl>
           </DialogContent>
 
-          <DialogActions
-            sx={{
-              p: 2.5,
-            }}
-          >
+          <DialogActions sx={{ p: 2.5 }}>
             <Button
               onClick={closeDialog}
               sx={{
@@ -883,7 +898,8 @@ const Home = () => {
               type="submit"
               variant="contained"
               disabled={
-                availableCourses.length === 0 &&
+                availableCourses.length ===
+                0 &&
                 !hasLegacyCourse
               }
               sx={{
@@ -891,8 +907,13 @@ const Home = () => {
                 textTransform: 'none',
                 fontWeight: 700,
 
+                transition:
+                  'transform .2s ease, background-color .2s ease',
+
                 '&:hover': {
                   bgcolor: '#e9364d',
+                  transform:
+                    'translateY(-1px)',
                 },
               }}
             >

@@ -30,6 +30,25 @@ const emptyCourse = {
   schedule: '',
 }
 
+const animatedCard = {
+  transition:
+    'transform .22s ease, box-shadow .22s ease',
+
+  '&:hover': {
+    transform: 'translateY(-3px)',
+    boxShadow:
+      '0 12px 30px rgba(37,43,58,.12)',
+  },
+
+  '@media (prefers-reduced-motion: reduce)': {
+    transition: 'none',
+
+    '&:hover': {
+      transform: 'none',
+    },
+  },
+}
+
 const Courses = () => {
   const [courses, setCourses] = useState([])
   const [form, setForm] = useState(emptyCourse)
@@ -40,7 +59,10 @@ const Courses = () => {
   const loadCourses = useCallback(async () => {
     try {
       setError('')
-      const data = await apiRequest('/api/courses')
+
+      const data =
+        await apiRequest('/api/courses')
+
       setCourses(data)
     } catch (err) {
       setError(err.message)
@@ -62,10 +84,20 @@ const Courses = () => {
 
     setForm({
       name: course.name || '',
-      description: course.description || '',
-      startDate: course.startDate?.slice(0, 10) || '',
-      endDate: course.endDate?.slice(0, 10) || '',
-      schedule: course.schedule || '',
+      description:
+        course.description || '',
+      startDate:
+        course.startDate?.slice(
+          0,
+          10,
+        ) || '',
+      endDate:
+        course.endDate?.slice(
+          0,
+          10,
+        ) || '',
+      schedule:
+        course.schedule || '',
     })
 
     setDialogOpen(true)
@@ -88,8 +120,13 @@ const Courses = () => {
           ? `/api/courses/${editingId}`
           : '/api/courses',
         {
-          method: editingId ? 'PUT' : 'POST',
-          body: JSON.stringify(form),
+          method:
+            editingId
+              ? 'PUT'
+              : 'POST',
+
+          body:
+            JSON.stringify(form),
         },
       )
 
@@ -101,14 +138,21 @@ const Courses = () => {
   }
 
   const deleteCourse = async (id) => {
-    if (!window.confirm('Delete this course?')) {
+    if (
+      !window.confirm(
+        'Delete this course?',
+      )
+    ) {
       return
     }
 
     try {
-      await apiRequest(`/api/courses/${id}`, {
-        method: 'DELETE',
-      })
+      await apiRequest(
+        `/api/courses/${id}`,
+        {
+          method: 'DELETE',
+        },
+      )
 
       await loadCourses()
     } catch (err) {
@@ -127,6 +171,27 @@ const Courses = () => {
             xs: 3,
             md: 5,
           },
+
+          animation:
+            'pageEnter .38s ease both',
+
+          '@keyframes pageEnter': {
+            from: {
+              opacity: 0,
+              transform:
+                'translateY(12px)',
+            },
+
+            to: {
+              opacity: 1,
+              transform:
+                'translateY(0)',
+            },
+          },
+
+          '@media (prefers-reduced-motion: reduce)': {
+            animation: 'none',
+          },
         }}
       >
         <Card
@@ -134,6 +199,7 @@ const Courses = () => {
             mb: 3,
             border: 0,
             color: '#fff',
+
             background:
               'linear-gradient(120deg, #252b3a 0%, #343b50 62%, #ff4057 145%)',
           }}
@@ -156,15 +222,20 @@ const Courses = () => {
             <Box
               sx={{
                 display: 'flex',
+
                 flexDirection: {
                   xs: 'column',
                   sm: 'row',
                 },
-                justifyContent: 'space-between',
+
+                justifyContent:
+                  'space-between',
+
                 alignItems: {
                   xs: 'flex-start',
                   sm: 'center',
                 },
+
                 gap: 3,
               }}
             >
@@ -193,7 +264,8 @@ const Courses = () => {
 
                 <Typography
                   sx={{
-                    color: 'rgba(255,255,255,.72)',
+                    color:
+                      'rgba(255,255,255,.72)',
                   }}
                 >
                   Manage your subjects and course schedules.
@@ -207,16 +279,25 @@ const Courses = () => {
                 sx={{
                   bgcolor: '#ff4057',
                   color: '#fff',
-                  minWidth: '125px',
-                  height: '42px',
+
+                  minWidth: 125,
+                  height: 42,
+
                   borderRadius: '10px',
+
                   textTransform: 'none',
                   fontWeight: 700,
+
                   boxShadow: 'none',
+
+                  transition:
+                    'transform .2s ease, background-color .2s ease',
 
                   '&:hover': {
                     bgcolor: '#e9364d',
                     boxShadow: 'none',
+                    transform:
+                      'translateY(-2px)',
                   },
                 }}
               >
@@ -238,10 +319,12 @@ const Courses = () => {
         <Box
           sx={{
             display: 'grid',
+
             gridTemplateColumns: {
               xs: '1fr',
               md: 'repeat(2, 1fr)',
             },
+
             gap: 2,
           }}
         >
@@ -249,6 +332,7 @@ const Courses = () => {
             <Card
               sx={{
                 gridColumn: '1 / -1',
+                ...animatedCard,
               }}
             >
               <CardContent
@@ -279,7 +363,10 @@ const Courses = () => {
             </Card>
           ) : (
             courses.map((course) => (
-              <Card key={course._id}>
+              <Card
+                key={course._id}
+                sx={animatedCard}
+              >
                 <CardContent>
                   <Stack
                     direction="row"
@@ -309,7 +396,8 @@ const Courses = () => {
                           variant="body2"
                           sx={{ mt: 1 }}
                         >
-                          Schedule: {course.schedule}
+                          Schedule:{' '}
+                          {course.schedule}
                         </Typography>
                       )}
 
@@ -336,19 +424,38 @@ const Courses = () => {
 
                     <Box>
                       <IconButton
-                        onClick={() => openEdit(course)}
-                        aria-label="Edit course"
+                        onClick={() =>
+                          openEdit(course)
+                        }
+                        sx={{
+                          transition:
+                            'transform .18s ease',
+
+                          '&:hover': {
+                            transform:
+                              'scale(1.08)',
+                          },
+                        }}
                       >
                         <EditIcon />
                       </IconButton>
 
                       <IconButton
                         onClick={() =>
-                          deleteCourse(course._id)
+                          deleteCourse(
+                            course._id,
+                          )
                         }
-                        aria-label="Delete course"
                         sx={{
                           color: '#ff4057',
+
+                          transition:
+                            'transform .18s ease',
+
+                          '&:hover': {
+                            transform:
+                              'scale(1.08)',
+                          },
                         }}
                       >
                         <DeleteIcon />
@@ -410,7 +517,8 @@ const Courses = () => {
               onChange={(e) =>
                 setForm({
                   ...form,
-                  description: e.target.value,
+                  description:
+                    e.target.value,
                 })
               }
             />
@@ -427,7 +535,8 @@ const Courses = () => {
               onChange={(e) =>
                 setForm({
                   ...form,
-                  startDate: e.target.value,
+                  startDate:
+                    e.target.value,
                 })
               }
             />
@@ -444,7 +553,8 @@ const Courses = () => {
               onChange={(e) =>
                 setForm({
                   ...form,
-                  endDate: e.target.value,
+                  endDate:
+                    e.target.value,
                 })
               }
             />
@@ -456,17 +566,14 @@ const Courses = () => {
               onChange={(e) =>
                 setForm({
                   ...form,
-                  schedule: e.target.value,
+                  schedule:
+                    e.target.value,
                 })
               }
             />
           </DialogContent>
 
-          <DialogActions
-            sx={{
-              p: 2.5,
-            }}
-          >
+          <DialogActions sx={{ p: 2.5 }}>
             <Button
               onClick={closeDialog}
               sx={{
@@ -484,8 +591,13 @@ const Courses = () => {
                 fontWeight: 700,
                 textTransform: 'none',
 
+                transition:
+                  'transform .2s ease',
+
                 '&:hover': {
                   bgcolor: '#e9364d',
+                  transform:
+                    'translateY(-1px)',
                 },
               }}
             >

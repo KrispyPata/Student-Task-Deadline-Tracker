@@ -30,6 +30,17 @@ const emptySession = {
   endTime: '',
 }
 
+const animatedCard = {
+  transition:
+    'transform .22s ease, box-shadow .22s ease',
+
+  '&:hover': {
+    transform: 'translateY(-3px)',
+    boxShadow:
+      '0 12px 30px rgba(37,43,58,.12)',
+  },
+}
+
 const Sessions = () => {
   const [sessions, setSessions] = useState([])
   const [form, setForm] = useState(emptySession)
@@ -40,7 +51,10 @@ const Sessions = () => {
   const loadSessions = useCallback(async () => {
     try {
       setError('')
-      const data = await apiRequest('/api/sessions')
+
+      const data =
+        await apiRequest('/api/sessions')
+
       setSessions(data)
     } catch (err) {
       setError(err.message)
@@ -62,10 +76,14 @@ const Sessions = () => {
 
     setForm({
       name: session.name || '',
-      frequency: session.frequency || '',
-      purpose: session.purpose || '',
-      startTime: session.startTime || '',
-      endTime: session.endTime || '',
+      frequency:
+        session.frequency || '',
+      purpose:
+        session.purpose || '',
+      startTime:
+        session.startTime || '',
+      endTime:
+        session.endTime || '',
     })
 
     setDialogOpen(true)
@@ -88,8 +106,13 @@ const Sessions = () => {
           ? `/api/sessions/${editingId}`
           : '/api/sessions',
         {
-          method: editingId ? 'PUT' : 'POST',
-          body: JSON.stringify(form),
+          method:
+            editingId
+              ? 'PUT'
+              : 'POST',
+
+          body:
+            JSON.stringify(form),
         },
       )
 
@@ -101,14 +124,21 @@ const Sessions = () => {
   }
 
   const deleteSession = async (id) => {
-    if (!window.confirm('Delete this session?')) {
+    if (
+      !window.confirm(
+        'Delete this session?',
+      )
+    ) {
       return
     }
 
     try {
-      await apiRequest(`/api/sessions/${id}`, {
-        method: 'DELETE',
-      })
+      await apiRequest(
+        `/api/sessions/${id}`,
+        {
+          method: 'DELETE',
+        },
+      )
 
       await loadSessions()
     } catch (err) {
@@ -127,6 +157,23 @@ const Sessions = () => {
             xs: 3,
             md: 5,
           },
+
+          animation:
+            'pageEnter .38s ease both',
+
+          '@keyframes pageEnter': {
+            from: {
+              opacity: 0,
+              transform:
+                'translateY(12px)',
+            },
+
+            to: {
+              opacity: 1,
+              transform:
+                'translateY(0)',
+            },
+          },
         }}
       >
         <Card
@@ -134,6 +181,7 @@ const Sessions = () => {
             mb: 3,
             border: 0,
             color: '#fff',
+
             background:
               'linear-gradient(120deg, #252b3a 0%, #343b50 62%, #ff4057 145%)',
           }}
@@ -156,15 +204,20 @@ const Sessions = () => {
             <Box
               sx={{
                 display: 'flex',
+
                 flexDirection: {
                   xs: 'column',
                   sm: 'row',
                 },
-                justifyContent: 'space-between',
+
+                justifyContent:
+                  'space-between',
+
                 alignItems: {
                   xs: 'flex-start',
                   sm: 'center',
                 },
+
                 gap: 3,
               }}
             >
@@ -193,7 +246,8 @@ const Sessions = () => {
 
                 <Typography
                   sx={{
-                    color: 'rgba(255,255,255,.72)',
+                    color:
+                      'rgba(255,255,255,.72)',
                   }}
                 >
                   Plan study sessions and recurring academic activities.
@@ -207,16 +261,25 @@ const Sessions = () => {
                 sx={{
                   bgcolor: '#ff4057',
                   color: '#fff',
-                  minWidth: '130px',
-                  height: '42px',
+
+                  minWidth: 130,
+                  height: 42,
+
                   borderRadius: '10px',
+
                   textTransform: 'none',
                   fontWeight: 700,
+
                   boxShadow: 'none',
+
+                  transition:
+                    'transform .2s ease, background-color .2s ease',
 
                   '&:hover': {
                     bgcolor: '#e9364d',
                     boxShadow: 'none',
+                    transform:
+                      'translateY(-2px)',
                   },
                 }}
               >
@@ -242,7 +305,7 @@ const Sessions = () => {
           }}
         >
           {sessions.length === 0 ? (
-            <Card>
+            <Card sx={animatedCard}>
               <CardContent
                 sx={{
                   py: 7,
@@ -271,7 +334,10 @@ const Sessions = () => {
             </Card>
           ) : (
             sessions.map((session) => (
-              <Card key={session._id}>
+              <Card
+                key={session._id}
+                sx={animatedCard}
+              >
                 <CardContent>
                   <Stack
                     direction={{
@@ -287,6 +353,14 @@ const Sessions = () => {
                       sx={{
                         color: '#ff4057',
                         fontSize: 34,
+
+                        transition:
+                          'transform .2s ease',
+
+                        '.MuiCard-root:hover &': {
+                          transform:
+                            'scale(1.08)',
+                        },
                       }}
                     />
 
@@ -309,14 +383,17 @@ const Sessions = () => {
                         sx={{ mt: 1 }}
                       >
                         Frequency:{' '}
-                        {session.frequency || 'Not set'}
+                        {session.frequency ||
+                          'Not set'}
                       </Typography>
 
                       <Typography variant="body2">
                         Time:{' '}
-                        {session.startTime || '—'}
+                        {session.startTime ||
+                          '—'}
                         {' - '}
-                        {session.endTime || '—'}
+                        {session.endTime ||
+                          '—'}
                       </Typography>
                     </Box>
 
@@ -325,16 +402,16 @@ const Sessions = () => {
                         onClick={() =>
                           openEdit(session)
                         }
-                        aria-label="Edit session"
                       >
                         <EditIcon />
                       </IconButton>
 
                       <IconButton
                         onClick={() =>
-                          deleteSession(session._id)
+                          deleteSession(
+                            session._id,
+                          )
                         }
-                        aria-label="Delete session"
                         sx={{
                           color: '#ff4057',
                         }}
@@ -396,7 +473,8 @@ const Sessions = () => {
               onChange={(e) =>
                 setForm({
                   ...form,
-                  purpose: e.target.value,
+                  purpose:
+                    e.target.value,
                 })
               }
             />
@@ -408,7 +486,8 @@ const Sessions = () => {
               onChange={(e) =>
                 setForm({
                   ...form,
-                  frequency: e.target.value,
+                  frequency:
+                    e.target.value,
                 })
               }
             />
@@ -425,7 +504,8 @@ const Sessions = () => {
               onChange={(e) =>
                 setForm({
                   ...form,
-                  startTime: e.target.value,
+                  startTime:
+                    e.target.value,
                 })
               }
             />
@@ -442,17 +522,14 @@ const Sessions = () => {
               onChange={(e) =>
                 setForm({
                   ...form,
-                  endTime: e.target.value,
+                  endTime:
+                    e.target.value,
                 })
               }
             />
           </DialogContent>
 
-          <DialogActions
-            sx={{
-              p: 2.5,
-            }}
-          >
+          <DialogActions sx={{ p: 2.5 }}>
             <Button
               onClick={closeDialog}
               sx={{
@@ -470,8 +547,13 @@ const Sessions = () => {
                 fontWeight: 700,
                 textTransform: 'none',
 
+                transition:
+                  'transform .2s ease',
+
                 '&:hover': {
                   bgcolor: '#e9364d',
+                  transform:
+                    'translateY(-1px)',
                 },
               }}
             >

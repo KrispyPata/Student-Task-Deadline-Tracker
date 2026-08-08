@@ -86,17 +86,18 @@ const Profile = () => {
       setError('')
       setSuccess('')
 
-      const updatedUser = await apiRequest(
-        `/api/users/${auth.user._id}`,
-        {
-          method: 'PUT',
+      const updatedUser =
+        await apiRequest(
+          `/api/users/${auth.user._id}`,
+          {
+            method: 'PUT',
 
-          body: JSON.stringify({
-            name: form.name,
-            email: form.email,
-          }),
-        },
-      )
+            body: JSON.stringify({
+              name: form.name,
+              email: form.email,
+            }),
+          },
+        )
 
       setUser(updatedUser)
 
@@ -122,9 +123,10 @@ const Profile = () => {
   }
 
   const deleteAccount = async () => {
-    const confirmed = window.confirm(
-      'Delete your account permanently? This action cannot be undone.',
-    )
+    const confirmed =
+      window.confirm(
+        'Delete your account permanently? This action cannot be undone.',
+      )
 
     if (!confirmed) {
       return
@@ -158,14 +160,35 @@ const Profile = () => {
             xs: 3,
             md: 5,
           },
+
+          animation:
+            'pageEnter .38s ease both',
+
+          '@keyframes pageEnter': {
+            from: {
+              opacity: 0,
+              transform:
+                'translateY(12px)',
+            },
+
+            to: {
+              opacity: 1,
+              transform:
+                'translateY(0)',
+            },
+          },
+
+          '@media (prefers-reduced-motion: reduce)': {
+            animation: 'none',
+          },
         }}
       >
-        {/* HERO */}
         <Card
           sx={{
             mb: 3,
             border: 0,
             color: '#fff',
+
             background:
               'linear-gradient(120deg, #252b3a 0%, #343b50 62%, #ff4057 145%)',
           }}
@@ -188,15 +211,20 @@ const Profile = () => {
             <Box
               sx={{
                 display: 'flex',
+
                 flexDirection: {
                   xs: 'column',
                   sm: 'row',
                 },
+
                 alignItems: {
                   xs: 'flex-start',
                   sm: 'center',
                 },
-                justifyContent: 'space-between',
+
+                justifyContent:
+                  'space-between',
+
                 width: '100%',
                 gap: 3,
               }}
@@ -231,7 +259,8 @@ const Profile = () => {
 
                 <Typography
                   sx={{
-                    color: 'rgba(255,255,255,.72)',
+                    color:
+                      'rgba(255,255,255,.72)',
                   }}
                 >
                   View and manage your Student Task Tracker account.
@@ -247,8 +276,8 @@ const Profile = () => {
                   bgcolor: '#ff4057',
                   color: '#fff',
 
-                  height: '42px',
-                  minWidth: '135px',
+                  height: 42,
+                  minWidth: 135,
 
                   px: 2.5,
 
@@ -259,17 +288,14 @@ const Profile = () => {
 
                   boxShadow: 'none',
 
-                  flexGrow: 0,
-                  flexShrink: 0,
-
-                  alignSelf: {
-                    xs: 'flex-start',
-                    sm: 'center',
-                  },
+                  transition:
+                    'transform .2s ease, background-color .2s ease',
 
                   '&:hover': {
                     bgcolor: '#e9364d',
                     boxShadow: 'none',
+                    transform:
+                      'translateY(-2px)',
                   },
                 }}
               >
@@ -279,7 +305,6 @@ const Profile = () => {
           </CardContent>
         </Card>
 
-        {/* ERROR */}
         {error && (
           <Alert
             severity="error"
@@ -289,7 +314,6 @@ const Profile = () => {
           </Alert>
         )}
 
-        {/* SUCCESS */}
         {success && (
           <Alert
             severity="success"
@@ -299,8 +323,20 @@ const Profile = () => {
           </Alert>
         )}
 
-        {/* PROFILE CARD */}
-        <Card>
+        <Card
+          sx={{
+            transition:
+              'transform .22s ease, box-shadow .22s ease',
+
+            '&:hover': {
+              transform:
+                'translateY(-3px)',
+
+              boxShadow:
+                '0 12px 30px rgba(37,43,58,.12)',
+            },
+          }}
+        >
           <CardContent
             sx={{
               p: {
@@ -336,6 +372,14 @@ const Profile = () => {
                   placeItems: 'center',
 
                   flexShrink: 0,
+
+                  transition:
+                    'transform .25s ease',
+
+                  '.MuiCard-root:hover &': {
+                    transform:
+                      'scale(1.04)',
+                  },
                 }}
               >
                 <PersonIcon
@@ -353,7 +397,8 @@ const Profile = () => {
                     fontWeight: 800,
                   }}
                 >
-                  {user?.name || 'Loading...'}
+                  {user?.name ||
+                    'Loading...'}
                 </Typography>
 
                 <Typography
@@ -377,11 +422,11 @@ const Profile = () => {
               </Box>
             </Stack>
 
-            {/* ACCOUNT DETAILS */}
             <Box
               sx={{
                 mt: 4,
                 pt: 3,
+
                 borderTop:
                   '1px solid #eceef2',
               }}
@@ -402,7 +447,7 @@ const Profile = () => {
 
                   gridTemplateColumns: {
                     xs: '1fr',
-                    sm: 'repeat(2, 1fr)',
+                    sm: 'repeat(2,1fr)',
                   },
 
                   gap: 2,
@@ -412,9 +457,7 @@ const Profile = () => {
                 <Box
                   sx={{
                     p: 2,
-
                     borderRadius: 2,
-
                     bgcolor: '#f7f8fb',
                   }}
                 >
@@ -428,9 +471,7 @@ const Profile = () => {
                   <Typography
                     sx={{
                       mt: 0.4,
-
                       fontWeight: 700,
-
                       color: '#252b3a',
                     }}
                   >
@@ -441,9 +482,7 @@ const Profile = () => {
                 <Box
                   sx={{
                     p: 2,
-
                     borderRadius: 2,
-
                     bgcolor: '#f7f8fb',
                   }}
                 >
@@ -457,9 +496,7 @@ const Profile = () => {
                   <Typography
                     sx={{
                       mt: 0.4,
-
                       fontWeight: 700,
-
                       color: '#252b3a',
                     }}
                   >
@@ -469,7 +506,6 @@ const Profile = () => {
               </Box>
             </Box>
 
-            {/* DANGER ZONE */}
             <Box
               sx={{
                 mt: 4,
@@ -505,10 +541,16 @@ const Profile = () => {
                 onClick={deleteAccount}
                 sx={{
                   mt: 2,
-
                   textTransform: 'none',
-
                   fontWeight: 700,
+
+                  transition:
+                    'transform .2s ease',
+
+                  '&:hover': {
+                    transform:
+                      'translateY(-1px)',
+                  },
                 }}
               >
                 Delete account
@@ -518,7 +560,6 @@ const Profile = () => {
         </Card>
       </Container>
 
-      {/* EDIT PROFILE DIALOG */}
       <Dialog
         open={editOpen}
         onClose={closeEdit}
@@ -552,7 +593,8 @@ const Profile = () => {
               onChange={(event) =>
                 setForm({
                   ...form,
-                  name: event.target.value,
+                  name:
+                    event.target.value,
                 })
               }
             />
@@ -565,17 +607,14 @@ const Profile = () => {
               onChange={(event) =>
                 setForm({
                   ...form,
-                  email: event.target.value,
+                  email:
+                    event.target.value,
                 })
               }
             />
           </DialogContent>
 
-          <DialogActions
-            sx={{
-              p: 2.5,
-            }}
-          >
+          <DialogActions sx={{ p: 2.5 }}>
             <Button
               onClick={closeEdit}
               sx={{
@@ -590,13 +629,16 @@ const Profile = () => {
               variant="contained"
               sx={{
                 bgcolor: '#ff4057',
-
                 textTransform: 'none',
-
                 fontWeight: 700,
+
+                transition:
+                  'transform .2s ease',
 
                 '&:hover': {
                   bgcolor: '#e9364d',
+                  transform:
+                    'translateY(-1px)',
                 },
               }}
             >

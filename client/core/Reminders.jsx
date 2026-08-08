@@ -35,10 +35,33 @@ const emptyReminder = {
   sendType: 'In App',
 }
 
+const animatedCard = {
+  transition:
+    'transform .22s ease, box-shadow .22s ease',
+
+  '&:hover': {
+    transform: 'translateY(-3px)',
+
+    boxShadow:
+      '0 12px 30px rgba(37,43,58,.12)',
+  },
+
+  '@media (prefers-reduced-motion: reduce)': {
+    transition: 'none',
+
+    '&:hover': {
+      transform: 'none',
+    },
+  },
+}
+
 const Reminders = () => {
   const [reminders, setReminders] = useState([])
   const [tasks, setTasks] = useState([])
-  const [form, setForm] = useState(emptyReminder)
+
+  const [form, setForm] = useState(
+    emptyReminder,
+  )
 
   const [editingId, setEditingId] =
     useState(null)
@@ -96,7 +119,7 @@ const Reminders = () => {
           'Student Task Tracker',
           {
             body:
-              'Notifications are now enabled.',
+              'Notifications are now enabled. Your reminders will be checked every 15 seconds while the app is open.',
           },
         )
       }
@@ -109,7 +132,9 @@ const Reminders = () => {
 
   const openCreate = () => {
     setEditingId(null)
+
     setForm(emptyReminder)
+
     setDialogOpen(true)
   }
 
@@ -123,10 +148,15 @@ const Reminders = () => {
 
     setForm({
       name: reminder.name || '',
+
       frequency:
         reminder.frequency || 'Once',
+
       task: taskId || '',
-      sendTime: reminder.sendTime || '',
+
+      sendTime:
+        reminder.sendTime || '',
+
       sendType:
         reminder.sendType || 'In App',
     })
@@ -137,6 +167,7 @@ const Reminders = () => {
   const closeDialog = () => {
     setDialogOpen(false)
     setEditingId(null)
+
     setForm(emptyReminder)
   }
 
@@ -161,6 +192,7 @@ const Reminders = () => {
       )
 
       closeDialog()
+
       await loadData()
     } catch (err) {
       setError(err.message)
@@ -168,11 +200,11 @@ const Reminders = () => {
   }
 
   const deleteReminder = async (id) => {
-    if (
-      !window.confirm(
-        'Delete this reminder?',
-      )
-    ) {
+    const confirmed = window.confirm(
+      'Delete this reminder?',
+    )
+
+    if (!confirmed) {
       return
     }
 
@@ -214,6 +246,32 @@ const Reminders = () => {
     )
   }
 
+  const formatTime = (time) => {
+    if (!time) {
+      return 'Not set'
+    }
+
+    const [hour, minute] =
+      time.split(':')
+
+    const date = new Date()
+
+    date.setHours(
+      Number(hour),
+      Number(minute),
+      0,
+      0,
+    )
+
+    return date.toLocaleTimeString(
+      [],
+      {
+        hour: 'numeric',
+        minute: '2-digit',
+      },
+    )
+  }
+
   return (
     <Box
       sx={{
@@ -229,17 +287,65 @@ const Reminders = () => {
             xs: 3,
             md: 5,
           },
+
+          animation:
+            'pageEnter .38s ease both',
+
+          '@keyframes pageEnter': {
+            from: {
+              opacity: 0,
+
+              transform:
+                'translateY(12px)',
+            },
+
+            to: {
+              opacity: 1,
+
+              transform:
+                'translateY(0)',
+            },
+          },
+
+          '@media (prefers-reduced-motion: reduce)': {
+            animation: 'none',
+          },
         }}
       >
         {/* HERO */}
         <Card
           sx={{
             mb: 3,
+
             border: 0,
+
             color: '#fff',
 
             background:
               'linear-gradient(120deg, #252b3a 0%, #343b50 62%, #ff4057 145%)',
+
+            animation:
+              'heroEnter .45s ease both',
+
+            '@keyframes heroEnter': {
+              from: {
+                opacity: 0,
+
+                transform:
+                  'translateY(-8px)',
+              },
+
+              to: {
+                opacity: 1,
+
+                transform:
+                  'translateY(0)',
+              },
+            },
+
+            '@media (prefers-reduced-motion: reduce)': {
+              animation: 'none',
+            },
           }}
         >
           <CardContent
@@ -275,9 +381,16 @@ const Reminders = () => {
                 },
 
                 gap: 3,
+
+                width: '100%',
               }}
             >
-              <Box>
+              <Box
+                sx={{
+                  flex: 1,
+                  minWidth: 0,
+                }}
+              >
                 <Typography
                   variant="overline"
                   sx={{
@@ -310,9 +423,9 @@ const Reminders = () => {
                       'rgba(255,255,255,.72)',
                   }}
                 >
-                  Create reminders for
-                  important assignments and
-                  deadlines.
+                  Create browser reminders
+                  for important assignments
+                  and deadlines.
                 </Typography>
               </Box>
 
@@ -327,12 +440,15 @@ const Reminders = () => {
                   'granted' && (
                   <Button
                     variant="outlined"
+
                     startIcon={
                       <NotificationsActiveIcon />
                     }
+
                     onClick={
                       enableNotifications
                     }
+
                     sx={{
                       color: '#fff',
 
@@ -341,11 +457,16 @@ const Reminders = () => {
 
                       height: 42,
 
-                      borderRadius: '10px',
+                      borderRadius:
+                        '10px',
 
-                      textTransform: 'none',
+                      textTransform:
+                        'none',
 
                       fontWeight: 700,
+
+                      transition:
+                        'transform .2s ease, background-color .2s ease, border-color .2s ease',
 
                       '&:hover': {
                         borderColor:
@@ -353,6 +474,17 @@ const Reminders = () => {
 
                         bgcolor:
                           'rgba(255,255,255,.08)',
+
+                        transform:
+                          'translateY(-2px)',
+                      },
+
+                      '@media (prefers-reduced-motion: reduce)': {
+                        transition: 'none',
+
+                        '&:hover': {
+                          transform: 'none',
+                        },
                       },
                     }}
                   >
@@ -362,8 +494,11 @@ const Reminders = () => {
 
                 <Button
                   variant="contained"
+
                   startIcon={<AddIcon />}
+
                   onClick={openCreate}
+
                   sx={{
                     bgcolor: '#ff4057',
 
@@ -376,17 +511,32 @@ const Reminders = () => {
                     borderRadius:
                       '10px',
 
-                    textTransform: 'none',
+                    textTransform:
+                      'none',
 
                     fontWeight: 700,
 
                     boxShadow: 'none',
+
+                    transition:
+                      'transform .2s ease, background-color .2s ease',
 
                     '&:hover': {
                       bgcolor:
                         '#e9364d',
 
                       boxShadow: 'none',
+
+                      transform:
+                        'translateY(-2px)',
+                    },
+
+                    '@media (prefers-reduced-motion: reduce)': {
+                      transition: 'none',
+
+                      '&:hover': {
+                        transform: 'none',
+                      },
                     },
                   }}
                 >
@@ -402,11 +552,14 @@ const Reminders = () => {
           'granted' && (
           <Alert
             severity="success"
-            sx={{ mb: 3 }}
+            sx={{
+              mb: 3,
+            }}
           >
             Browser notifications are
-            enabled. Reminders will appear
-            while this application is open.
+            enabled. Reminders are checked
+            every 15 seconds while this
+            application is open.
           </Alert>
         )}
 
@@ -414,7 +567,9 @@ const Reminders = () => {
           'denied' && (
           <Alert
             severity="warning"
-            sx={{ mb: 3 }}
+            sx={{
+              mb: 3,
+            }}
           >
             Browser notifications are
             blocked. Allow notifications
@@ -427,7 +582,9 @@ const Reminders = () => {
           'unsupported' && (
           <Alert
             severity="warning"
-            sx={{ mb: 3 }}
+            sx={{
+              mb: 3,
+            }}
           >
             This browser does not support
             desktop notifications.
@@ -437,7 +594,9 @@ const Reminders = () => {
         {error && (
           <Alert
             severity="error"
-            sx={{ mb: 3 }}
+            sx={{
+              mb: 3,
+            }}
           >
             {error}
           </Alert>
@@ -451,23 +610,37 @@ const Reminders = () => {
           }}
         >
           {reminders.length === 0 ? (
-            <Card>
+            <Card sx={animatedCard}>
               <CardContent
                 sx={{
                   py: 7,
-                  textAlign: 'center',
+
+                  textAlign:
+                    'center',
                 }}
               >
                 <NotificationsIcon
                   sx={{
                     color: '#ff4057',
+
                     fontSize: 48,
+
+                    transition:
+                      'transform .25s ease',
+
+                    '.MuiCard-root:hover &':
+                      {
+                        transform:
+                          'scale(1.08)',
+                      },
                   }}
                 />
 
                 <Typography
                   variant="h6"
+
                   fontWeight={700}
+
                   sx={{
                     mt: 1,
                   }}
@@ -488,6 +661,7 @@ const Reminders = () => {
               (reminder) => (
                 <Card
                   key={reminder._id}
+                  sx={animatedCard}
                 >
                   <CardContent>
                     <Stack
@@ -495,9 +669,11 @@ const Reminders = () => {
                         xs: 'column',
                         sm: 'row',
                       }}
+
                       alignItems={{
                         sm: 'center',
                       }}
+
                       spacing={2}
                     >
                       <NotificationsIcon
@@ -506,6 +682,15 @@ const Reminders = () => {
                             '#ff4057',
 
                           fontSize: 34,
+
+                          transition:
+                            'transform .22s ease',
+
+                          '.MuiCard-root:hover &':
+                            {
+                              transform:
+                                'scale(1.08)',
+                            },
                         }}
                       />
 
@@ -516,7 +701,9 @@ const Reminders = () => {
                       >
                         <Typography
                           variant="h6"
+
                           fontWeight={800}
+
                           color="#252b3a"
                         >
                           {reminder.name}
@@ -533,6 +720,7 @@ const Reminders = () => {
 
                         <Typography
                           variant="body2"
+
                           sx={{
                             mt: 0.8,
                           }}
@@ -542,16 +730,24 @@ const Reminders = () => {
                             'Not set'}
                         </Typography>
 
-                        <Typography variant="body2">
+                        <Typography
+                          variant="body2"
+                        >
                           Time:{' '}
-                          {reminder.sendTime ||
-                            'Not set'}
+                          {formatTime(
+                            reminder.sendTime,
+                          )}
                         </Typography>
 
-                        <Typography variant="body2">
+                        <Typography
+                          variant="body2"
+                        >
                           Type:{' '}
-                          {reminder.sendType ||
-                            'Not set'}
+                          {reminder.sendType ===
+                          'In App'
+                            ? 'Browser notification'
+                            : reminder.sendType ||
+                              'Not set'}
                         </Typography>
                       </Box>
 
@@ -562,7 +758,21 @@ const Reminders = () => {
                               reminder,
                             )
                           }
+
                           aria-label="Edit reminder"
+
+                          sx={{
+                            color:
+                              '#252b3a',
+
+                            transition:
+                              'transform .18s ease',
+
+                            '&:hover': {
+                              transform:
+                                'scale(1.08)',
+                            },
+                          }}
                         >
                           <EditIcon />
                         </IconButton>
@@ -573,10 +783,20 @@ const Reminders = () => {
                               reminder._id,
                             )
                           }
+
                           aria-label="Delete reminder"
+
                           sx={{
                             color:
                               '#ff4057',
+
+                            transition:
+                              'transform .18s ease',
+
+                            '&:hover': {
+                              transform:
+                                'scale(1.08)',
+                            },
                           }}
                         >
                           <DeleteIcon />
@@ -623,10 +843,14 @@ const Reminders = () => {
                 '12px !important',
             }}
           >
+            {/* NAME */}
             <TextField
               label="Reminder name"
+
               value={form.name}
+
               required
+
               onChange={(event) =>
                 setForm({
                   ...form,
@@ -645,7 +869,9 @@ const Reminders = () => {
 
               <Select
                 value={form.task}
+
                 label="Task"
+
                 onChange={(event) =>
                   setForm({
                     ...form,
@@ -665,6 +891,9 @@ const Reminders = () => {
                     key={task._id}
                   >
                     {task.title}
+                    {task.course
+                      ? ` — ${task.course}`
+                      : ''}
                   </MenuItem>
                 ))}
               </Select>
@@ -683,7 +912,9 @@ const Reminders = () => {
                 value={
                   form.frequency
                 }
+
                 label="Frequency"
+
                 onChange={(event) =>
                   setForm({
                     ...form,
@@ -707,17 +938,22 @@ const Reminders = () => {
               </Select>
             </FormControl>
 
-            {/* TIME */}
+            {/* SEND TIME */}
             <TextField
               label="Send time"
+
               type="time"
+
               value={form.sendTime}
+
               required
+
               slotProps={{
                 inputLabel: {
                   shrink: true,
                 },
               }}
+
               onChange={(event) =>
                 setForm({
                   ...form,
@@ -739,7 +975,9 @@ const Reminders = () => {
 
               <Select
                 value={form.sendType}
+
                 label="Send type"
+
                 onChange={(event) =>
                   setForm({
                     ...form,
@@ -754,6 +992,12 @@ const Reminders = () => {
                 </MenuItem>
               </Select>
             </FormControl>
+
+            <Alert severity="info">
+              Browser notifications are
+              checked every 15 seconds while
+              Student Task Tracker is open.
+            </Alert>
           </DialogContent>
 
           <DialogActions
@@ -763,6 +1007,7 @@ const Reminders = () => {
           >
             <Button
               onClick={closeDialog}
+
               sx={{
                 color: '#252b3a',
               }}
@@ -772,7 +1017,9 @@ const Reminders = () => {
 
             <Button
               variant="contained"
+
               type="submit"
+
               sx={{
                 bgcolor: '#ff4057',
 
@@ -780,9 +1027,23 @@ const Reminders = () => {
 
                 textTransform: 'none',
 
+                transition:
+                  'transform .2s ease, background-color .2s ease',
+
                 '&:hover': {
                   bgcolor:
                     '#e9364d',
+
+                  transform:
+                    'translateY(-1px)',
+                },
+
+                '@media (prefers-reduced-motion: reduce)': {
+                  transition: 'none',
+
+                  '&:hover': {
+                    transform: 'none',
+                  },
                 },
               }}
             >

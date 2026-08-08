@@ -62,6 +62,24 @@ const LandingPage = () => {
         sx={{
           bgcolor: '#252b3a',
           borderBottom: '1px solid rgba(255,255,255,.08)',
+
+          animation: 'headerEnter .45s ease both',
+
+          '@keyframes headerEnter': {
+            from: {
+              opacity: 0,
+              transform: 'translateY(-12px)',
+            },
+
+            to: {
+              opacity: 1,
+              transform: 'translateY(0)',
+            },
+          },
+
+          '@media (prefers-reduced-motion: reduce)': {
+            animation: 'none',
+          },
         }}
       >
         <Container maxWidth="lg">
@@ -74,19 +92,41 @@ const LandingPage = () => {
               gap: 2,
             }}
           >
+            {/* BRAND */}
             <Stack
               direction="row"
               alignItems="center"
               spacing={1.4}
+              sx={{
+                cursor: 'pointer',
+              }}
+              onClick={() => navigate('/')}
             >
               <Box
                 component="img"
                 src={logo}
-                alt="Student Task Tracker"
+                alt="Node Nomads"
                 sx={{
                   width: 50,
                   height: 50,
                   objectFit: 'contain',
+
+                  transition:
+                    'transform .25s ease, filter .25s ease',
+
+                  '&:hover': {
+                    transform: 'scale(1.06)',
+                    filter:
+                      'drop-shadow(0 5px 10px rgba(255,64,87,.22))',
+                  },
+
+                  '@media (prefers-reduced-motion: reduce)': {
+                    transition: 'none',
+
+                    '&:hover': {
+                      transform: 'none',
+                    },
+                  },
                 }}
               />
 
@@ -95,10 +135,12 @@ const LandingPage = () => {
                   sx={{
                     color: '#fff',
                     fontWeight: 800,
+
                     fontSize: {
                       xs: '1rem',
                       sm: '1.25rem',
                     },
+
                     lineHeight: 1.1,
                   }}
                 >
@@ -117,6 +159,7 @@ const LandingPage = () => {
               </Box>
             </Stack>
 
+            {/* NAV BUTTONS */}
             <Stack
               direction="row"
               spacing={1}
@@ -124,15 +167,31 @@ const LandingPage = () => {
               {auth?.token ? (
                 <Button
                   variant="contained"
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() =>
+                    navigate('/dashboard')
+                  }
                   endIcon={<ArrowForwardIcon />}
                   sx={{
                     bgcolor: '#ff4057',
                     textTransform: 'none',
                     fontWeight: 700,
 
+                    transition:
+                      'transform .2s ease, background-color .2s ease, box-shadow .2s ease',
+
                     '&:hover': {
                       bgcolor: '#e9364d',
+                      transform: 'translateY(-2px)',
+                      boxShadow:
+                        '0 7px 18px rgba(255,64,87,.24)',
+                    },
+
+                    '@media (prefers-reduced-motion: reduce)': {
+                      transition: 'none',
+
+                      '&:hover': {
+                        transform: 'none',
+                      },
                     },
                   }}
                 >
@@ -141,13 +200,33 @@ const LandingPage = () => {
               ) : (
                 <>
                   <Button
-                    onClick={() => navigate('/login')}
+                    onClick={() =>
+                      navigate('/login')
+                    }
                     sx={{
                       color: '#fff',
                       textTransform: 'none',
+
                       display: {
                         xs: 'none',
                         sm: 'inline-flex',
+                      },
+
+                      transition:
+                        'transform .2s ease, background-color .2s ease',
+
+                      '&:hover': {
+                        transform: 'translateY(-1px)',
+                        bgcolor:
+                          'rgba(255,255,255,.06)',
+                      },
+
+                      '@media (prefers-reduced-motion: reduce)': {
+                        transition: 'none',
+
+                        '&:hover': {
+                          transform: 'none',
+                        },
                       },
                     }}
                   >
@@ -156,14 +235,31 @@ const LandingPage = () => {
 
                   <Button
                     variant="contained"
-                    onClick={() => navigate('/register')}
+                    onClick={() =>
+                      navigate('/register')
+                    }
                     sx={{
                       bgcolor: '#ff4057',
                       textTransform: 'none',
                       fontWeight: 700,
 
+                      transition:
+                        'transform .2s ease, background-color .2s ease, box-shadow .2s ease',
+
                       '&:hover': {
                         bgcolor: '#e9364d',
+                        transform: 'translateY(-2px)',
+
+                        boxShadow:
+                          '0 7px 18px rgba(255,64,87,.24)',
+                      },
+
+                      '@media (prefers-reduced-motion: reduce)': {
+                        transition: 'none',
+
+                        '&:hover': {
+                          transform: 'none',
+                        },
                       },
                     }}
                   >
@@ -184,23 +280,65 @@ const LandingPage = () => {
             xs: 5,
             md: 9,
           },
+
+          animation: 'pageEnter .55s ease both',
+
+          '@keyframes pageEnter': {
+            from: {
+              opacity: 0,
+              transform: 'translateY(18px)',
+            },
+
+            to: {
+              opacity: 1,
+              transform: 'translateY(0)',
+            },
+          },
+
+          '@media (prefers-reduced-motion: reduce)': {
+            animation: 'none',
+          },
         }}
       >
         <Box
           sx={{
             display: 'grid',
+
             gridTemplateColumns: {
               xs: '1fr',
               md: '1.05fr .95fr',
             },
+
             alignItems: 'center',
+
             gap: {
               xs: 5,
               md: 8,
             },
           }}
         >
-          <Box>
+          {/* HERO TEXT */}
+          <Box
+            sx={{
+              animation: 'heroTextEnter .6s ease .08s both',
+
+              '@keyframes heroTextEnter': {
+                from: {
+                  opacity: 0,
+                  transform: 'translateX(-20px)',
+                },
+
+                to: {
+                  opacity: 1,
+                  transform: 'translateX(0)',
+                },
+              },
+
+              '@media (prefers-reduced-motion: reduce)': {
+                animation: 'none',
+              },
+            }}
+          >
             <Typography
               variant="overline"
               sx={{
@@ -218,6 +356,7 @@ const LandingPage = () => {
                 color: '#252b3a',
                 fontWeight: 900,
                 lineHeight: 1.05,
+
                 fontSize: {
                   xs: '2.7rem',
                   md: '4.3rem',
@@ -225,6 +364,7 @@ const LandingPage = () => {
               }}
             >
               Stay organized.
+
               <Box
                 component="span"
                 sx={{
@@ -242,6 +382,7 @@ const LandingPage = () => {
                 maxWidth: 650,
                 color: '#697083',
                 lineHeight: 1.8,
+
                 fontSize: {
                   xs: '1rem',
                   md: '1.15rem',
@@ -266,7 +407,9 @@ const LandingPage = () => {
                 <Button
                   variant="contained"
                   size="large"
-                  onClick={() => navigate('/dashboard')}
+                  onClick={() =>
+                    navigate('/dashboard')
+                  }
                   endIcon={<ArrowForwardIcon />}
                   sx={{
                     bgcolor: '#ff4057',
@@ -275,8 +418,23 @@ const LandingPage = () => {
                     textTransform: 'none',
                     fontWeight: 800,
 
+                    transition:
+                      'transform .2s ease, box-shadow .2s ease, background-color .2s ease',
+
                     '&:hover': {
                       bgcolor: '#e9364d',
+                      transform: 'translateY(-2px)',
+
+                      boxShadow:
+                        '0 9px 22px rgba(255,64,87,.24)',
+                    },
+
+                    '@media (prefers-reduced-motion: reduce)': {
+                      transition: 'none',
+
+                      '&:hover': {
+                        transform: 'none',
+                      },
                     },
                   }}
                 >
@@ -287,7 +445,9 @@ const LandingPage = () => {
                   <Button
                     variant="contained"
                     size="large"
-                    onClick={() => navigate('/register')}
+                    onClick={() =>
+                      navigate('/register')
+                    }
                     endIcon={<ArrowForwardIcon />}
                     sx={{
                       bgcolor: '#ff4057',
@@ -296,8 +456,23 @@ const LandingPage = () => {
                       textTransform: 'none',
                       fontWeight: 800,
 
+                      transition:
+                        'transform .2s ease, box-shadow .2s ease, background-color .2s ease',
+
                       '&:hover': {
                         bgcolor: '#e9364d',
+                        transform: 'translateY(-2px)',
+
+                        boxShadow:
+                          '0 9px 22px rgba(255,64,87,.24)',
+                      },
+
+                      '@media (prefers-reduced-motion: reduce)': {
+                        transition: 'none',
+
+                        '&:hover': {
+                          transform: 'none',
+                        },
                       },
                     }}
                   >
@@ -307,19 +482,38 @@ const LandingPage = () => {
                   <Button
                     variant="outlined"
                     size="large"
-                    onClick={() => navigate('/login')}
+                    onClick={() =>
+                      navigate('/login')
+                    }
                     startIcon={<LoginIcon />}
                     sx={{
                       px: 3,
                       py: 1.3,
+
                       borderColor: '#252b3a',
                       color: '#252b3a',
+
                       textTransform: 'none',
                       fontWeight: 700,
 
+                      transition:
+                        'transform .2s ease, background-color .2s ease',
+
                       '&:hover': {
                         borderColor: '#252b3a',
-                        bgcolor: 'rgba(37,43,58,.04)',
+                        bgcolor:
+                          'rgba(37,43,58,.04)',
+
+                        transform:
+                          'translateY(-2px)',
+                      },
+
+                      '@media (prefers-reduced-motion: reduce)': {
+                        transition: 'none',
+
+                        '&:hover': {
+                          transform: 'none',
+                        },
                       },
                     }}
                   >
@@ -330,11 +524,33 @@ const LandingPage = () => {
             </Stack>
           </Box>
 
+          {/* HERO LOGO */}
           <Box
             sx={{
               display: 'flex',
               justifyContent: 'center',
               alignItems: 'center',
+
+              animation:
+                'heroLogoEnter .7s ease .18s both',
+
+              '@keyframes heroLogoEnter': {
+                from: {
+                  opacity: 0,
+                  transform:
+                    'translateX(22px) scale(.96)',
+                },
+
+                to: {
+                  opacity: 1,
+                  transform:
+                    'translateX(0) scale(1)',
+                },
+              },
+
+              '@media (prefers-reduced-motion: reduce)': {
+                animation: 'none',
+              },
             }}
           >
             <Box
@@ -347,10 +563,30 @@ const LandingPage = () => {
                   sm: 340,
                   md: 430,
                 },
+
                 maxWidth: '200%',
                 objectFit: 'contain',
+
                 filter:
                   'drop-shadow(0 24px 38px rgba(37,43,58,.15))',
+
+                animation:
+                  'logoFloat 4s ease-in-out infinite',
+
+                '@keyframes logoFloat': {
+                  '0%, 100%': {
+                    transform: 'translateY(0)',
+                  },
+
+                  '50%': {
+                    transform:
+                      'translateY(-8px)',
+                  },
+                },
+
+                '@media (prefers-reduced-motion: reduce)': {
+                  animation: 'none',
+                },
               }}
             />
           </Box>
@@ -362,6 +598,25 @@ const LandingPage = () => {
             mt: {
               xs: 7,
               md: 10,
+            },
+
+            animation:
+              'featuresHeadingEnter .55s ease .25s both',
+
+            '@keyframes featuresHeadingEnter': {
+              from: {
+                opacity: 0,
+                transform: 'translateY(15px)',
+              },
+
+              to: {
+                opacity: 1,
+                transform: 'translateY(0)',
+              },
+            },
+
+            '@media (prefers-reduced-motion: reduce)': {
+              animation: 'none',
             },
           }}
         >
@@ -390,20 +645,60 @@ const LandingPage = () => {
           <Box
             sx={{
               display: 'grid',
+
               gridTemplateColumns: {
                 xs: '1fr',
                 sm: 'repeat(2, 1fr)',
                 lg: 'repeat(4, 1fr)',
               },
+
               gap: 2,
             }}
           >
-            {features.map((feature) => (
+            {features.map((feature, index) => (
               <Card
                 key={feature.title}
                 sx={{
                   height: '100%',
-                  borderTop: '4px solid #ff4057',
+
+                  borderTop:
+                    '4px solid #ff4057',
+
+                  animation:
+                    `featureEnter .45s ease ${0.35 + index * 0.08}s both`,
+
+                  transition:
+                    'transform .22s ease, box-shadow .22s ease',
+
+                  '&:hover': {
+                    transform: 'translateY(-5px)',
+
+                    boxShadow:
+                      '0 14px 32px rgba(37,43,58,.12)',
+                  },
+
+                  '@keyframes featureEnter': {
+                    from: {
+                      opacity: 0,
+                      transform:
+                        'translateY(18px)',
+                    },
+
+                    to: {
+                      opacity: 1,
+                      transform:
+                        'translateY(0)',
+                    },
+                  },
+
+                  '@media (prefers-reduced-motion: reduce)': {
+                    animation: 'none',
+                    transition: 'none',
+
+                    '&:hover': {
+                      transform: 'none',
+                    },
+                  },
                 }}
               >
                 <CardContent sx={{ p: 3 }}>
@@ -411,12 +706,33 @@ const LandingPage = () => {
                     sx={{
                       width: 58,
                       height: 58,
+
                       display: 'grid',
                       placeItems: 'center',
+
                       borderRadius: 3,
-                      bgcolor: 'rgba(255,64,87,.09)',
+
+                      bgcolor:
+                        'rgba(255,64,87,.09)',
+
                       color: '#ff4057',
+
                       mb: 2,
+
+                      transition:
+                        'transform .22s ease, background-color .22s ease',
+
+                      '.MuiCard-root:hover &': {
+                        transform:
+                          'scale(1.08)',
+
+                        bgcolor:
+                          'rgba(255,64,87,.14)',
+                      },
+
+                      '@media (prefers-reduced-motion: reduce)': {
+                        transition: 'none',
+                      },
                     }}
                   >
                     {feature.icon}
@@ -448,6 +764,7 @@ const LandingPage = () => {
         </Box>
       </Container>
 
+      {/* FOOTER */}
       <Box
         component="footer"
         sx={{
