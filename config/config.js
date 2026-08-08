@@ -1,6 +1,5 @@
 import dotenv from 'dotenv'
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+
 
 dotenv.config()
 
@@ -18,21 +17,4 @@ const config = {
     'YOUR_secret_key',
 }
 
-export default config({
-  plugins: [react()],
-
-  server: {
-    port: 5173,
-
-    proxy: {
-      '/api': 'http://localhost:3000',
-      '/auth': 'http://localhost:3000',
-    },
-  },
-
-  test: {
-    environment: 'jsdom',
-    globals: true,
-    setupFiles: './src/setupTests.js',
-  },
-})
+export default config

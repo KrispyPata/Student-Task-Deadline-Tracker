@@ -395,6 +395,24 @@ const LandingPage = () => {
               application.
             </Typography>
 
+            {/* CI/CD DEMONSTRATION CONTENT */}
+            <Typography
+              sx={{
+                mt: 2,
+                maxWidth: 650,
+                color: '#697083',
+                lineHeight: 1.7,
+                fontSize: {
+                  xs: '.95rem',
+                  md: '1rem',
+                },
+              }}
+            >
+              Built by Node Nomads to help students stay organized,
+              manage deadlines, and keep track of their academic
+              progress throughout the semester.
+            </Typography>
+
             <Stack
               direction={{
                 xs: 'column',
