@@ -34,6 +34,15 @@ const emptyTask = {
   status: 'Not Started',
 }
 
+const formatDateOnly = (date) => {
+  if (!date) return ''
+
+  const dateOnly = date.split('T')[0]
+  const [year, month, day] = dateOnly.split('-')
+
+  return `${Number(month)}/${Number(day)}/${year}`
+}
+
 const statusStyles = {
   'Not Started': {
     bgcolor: '#eef0f4',
@@ -650,9 +659,9 @@ const Home = () => {
 
                       <Typography color="text.secondary">
                         {task.course} · Due{' '}
-                        {new Date(
+                        {formatDateOnly(
                           task.dueDate,
-                        ).toLocaleDateString()}
+                        )}
                       </Typography>
 
                       {task.description && (

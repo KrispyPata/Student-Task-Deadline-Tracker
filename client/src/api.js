@@ -1,27 +1,5 @@
 import { getAuth } from './auth'
 
-/*
- * LOCAL DEVELOPMENT
- *
- * VITE_API_URL is empty, so requests such as:
- *
- * /api/tasks
- *
- * are handled by the proxy in vite.config.js:
- *
- * localhost:5173
- *       ↓
- * localhost:3000
- *
- *
- * PRODUCTION
- *
- * Netlify gets VITE_API_URL from its
- * environment variables:
- *
- * https://your-render-service.onrender.com
- */
-
 const API_URL = (
   import.meta.env.VITE_API_URL || ''
 ).replace(/\/$/, '')
